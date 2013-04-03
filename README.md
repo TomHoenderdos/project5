@@ -35,4 +35,5 @@ Users can play the notorious hangman game but there is a catch. The game manipul
 *	A list of high scores (Tom)
 
 ## Mockups:
-![Picture 2](/doc/mockup.png)
+![Picture 1](/doc/IMG_0074.JPG)
+![Picture 2](/doc/IMG_0075.JPG)
