@@ -33,6 +33,7 @@ Users can play the notorious hangman game but there is a catch. The game manipul
 *	Algorithm of the game including the game elements (Jeroen)
 *	Changing the difficulty (Tom)
 *	A list of high scores (Tom)
+*	Persistant storage (Tom)
 
 ## Mockups:
 ![Picture 1](/doc/IMG_0074.JPG)
