@@ -2,20 +2,22 @@ package nl.mprog.evilhangman;
 
 import android.os.Bundle;
 import android.app.Activity;
-import android.content.Context;
 import android.view.KeyEvent;
 import android.view.Menu;
-import android.view.View;
-import android.view.inputmethod.InputMethodManager;
-import android.widget.RelativeLayout;
 
 public class MainActivity extends Activity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        
+        super.onCreate(savedInstanceState);        
         setContentView(R.layout.activity_main);
+
+        WordList.instance.parseWords(this);
+        
+        
+        for(int i = 0; i < WordList.instance.getWords().size(); i++) {
+        	System.out.println(WordList.instance.getWords().get(WordList.instance.getWords().keyAt(i)).toString());
+        }
     }
 
 
@@ -33,6 +35,7 @@ public class MainActivity extends Activity {
     	int min_value = KeyEvent.KEYCODE_A;
     	int key_press = begin + (keyCode-min_value);
     	System.out.println("Key:"+(char)key_press);
+    	
     	return super.onKeyDown(keyCode, event);
     }    
 }

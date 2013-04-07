@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<array name="word_list">
+	<item>BEAR</item>
+	<item>BOAR</item>
+	<item>DEER</item>
+	<item>DUCK</item>
+	<item>HARE</item>
+	<item>DUCKFACE</item>
+</array>
+</resources>
