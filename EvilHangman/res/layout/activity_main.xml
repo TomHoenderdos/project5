@@ -7,11 +7,53 @@
     android:paddingLeft="@dimen/activity_horizontal_margin"
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
+    android:background="@drawable/texture_bg"
     tools:context=".MainActivity" >
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/hello_world" />
-
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+             
+	    <TextView
+	        android:id="@+id/attempts_view"
+	        android:layout_height="wrap_content"
+	        android:layout_width="wrap_content"
+	        android:layout_alignParentRight="true"
+		    android:paddingBottom="@dimen/attempts_vertical_margin"
+		    android:paddingLeft="@dimen/attempts_horizontal_margin"
+		    android:paddingRight="@dimen/attempts_horizontal_margin"
+		    android:paddingTop="@dimen/attempts_vertical_margin"
+	        android:gravity="center_vertical"
+	        android:text="Attempts 3/10"
+	        android:textSize="12sp"
+	        android:textColor="#FFFFFF"/>
+        
+    </RelativeLayout>
+    
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="center"
+        android:layout_above="@+id/keyboardView" >
+        
+	    <TextView
+	        android:id="@+id/word_view"
+	        android:layout_height="wrap_content"
+	        android:layout_width="wrap_content"
+	        android:gravity="center"
+	        android:text="H _ N _ M _ N"
+	        android:textSize="26sp"
+	        android:textColor="#FFFFFF"/>
+	    
+    </RelativeLayout>
+    
+  	<android.inputmethodservice.KeyboardView
+  	    android:id="@+id/keyboardView"
+  	    android:layout_width="match_parent"
+  	    android:layout_height="wrap_content"
+  	    android:layout_alignParentBottom="true"
+  	    android:layout_alignParentLeft="true"
+  	    android:focusable="true"
+  	    android:focusableInTouchMode="true" />
+  	
 </RelativeLayout>
