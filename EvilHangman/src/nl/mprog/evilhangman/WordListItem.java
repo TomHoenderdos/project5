@@ -3,7 +3,7 @@ package nl.mprog.evilhangman;
 import java.util.ArrayList;
 import java.util.Random;
 
-public class WordListModel extends ArrayList<String> {
+public class WordListItem extends ArrayList<String> {
 
 	private static final long serialVersionUID = 1L;
 

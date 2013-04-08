@@ -6,9 +6,9 @@ import java.util.Random;
 import android.content.Context;
 import android.util.SparseArray;
 
-public class WordList extends SparseArray<WordListModel>{
+public class WordList extends SparseArray<WordListItem>{
 	
-	private WordListModel current_word_list_model;
+	private WordListItem current_word_list_model;
 	
 	public WordList(Context ctx) {
 		this.parseWords(ctx);
@@ -19,7 +19,7 @@ public class WordList extends SparseArray<WordListModel>{
 		for(String word : words) {
 			int key = word.length();
 			if(this.get(key) == null) {
-				this.put(word.length(), new WordListModel());
+				this.put(word.length(), new WordListItem());
 			}
 			this.get(key).add(word);
 		}
@@ -34,11 +34,11 @@ public class WordList extends SparseArray<WordListModel>{
 		return current_word_list_model.get(rand.nextInt(current_word_list_model.size()));
 	}
 
-	public WordListModel getCurrent_word_list_model() {
+	public WordListItem getCurrent_word_list_model() {
 		return current_word_list_model;
 	}
 
-	public void setCurrent_word_list_model(WordListModel current_word_list_model) {
+	public void setCurrent_word_list_model(WordListItem current_word_list_model) {
 		this.current_word_list_model = current_word_list_model;
 	}	
 	
