@@ -7,7 +7,7 @@ public class WordListItem extends ArrayList<String> {
 
 	private static final long serialVersionUID = 1L;
 
-	public String GetEvilWord(String old_word, String match_holder, ArrayList<Character> guessed_characters) {
+	public String GetEvilWord(String old_word, String match_holder, ArrayList<Character> guessed_characters, char latest_char) {
 		String new_word = old_word;				
 		int new_score = (int) Double.NEGATIVE_INFINITY;
 		char[] matches = match_holder.toCharArray();
@@ -19,16 +19,24 @@ public class WordListItem extends ArrayList<String> {
 			int i = 0;
 			for(; i < matches.length; i++) {
 				if(matches[i] == '_') { 
+					if(words[i] == latest_char) {
+						word_score--;
+						continue;
+					}
+					
+					boolean outside_break = false;
 					for(char c : guessed_characters) {
 						if(words[i] == c) {
-							word_score--;
+							outside_break = true;
 							break;
 						}
 					}
+					if(outside_break) break;
+					
 					continue;
 				}
 				
-				if(matches[i] != words[i]) {
+				if(match_holder.charAt(i) != words[i]) {
 					break;
 				}
 			}

@@ -21,7 +21,7 @@ public class WordList extends SparseArray<WordListItem>{
 			if(this.get(key) == null) {
 				this.put(word.length(), new WordListItem());
 			}
-			this.get(key).add(word);
+			this.get(key).add(word.toLowerCase());
 		}
 		for(int i = 0; i < this.size(); i++) {
 		   Collections.sort(this.valueAt(i));
