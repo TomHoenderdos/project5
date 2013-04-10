@@ -27,6 +27,7 @@ import android.widget.ImageView;
  * @param <T>
  *            The Number type of the range values. One of Long, Double, Integer, Float, Short, Byte or BigDecimal.
  */
+
 public class RangeSeekBar<T extends Number> extends ImageView {
         private final Paint paint = new Paint(Paint.ANTI_ALIAS_FLAG);
         private final Bitmap thumbImage = BitmapFactory.decodeResource(getResources(), R.drawable.seek_thumb_normal);
@@ -298,7 +299,7 @@ public class RangeSeekBar<T extends Number> extends ImageView {
                 if (pointerId == mActivePointerId) {
                         // This was our active pointer going up. Choose
                         // a new active pointer and adjust accordingly.
-                        // TODO: Make this decision more intelligent.
+                        // To Do: Make this decision more intelligent.
                         final int newPointerIndex = pointerIndex == 0 ? 1 : 0;
                         mDownMotionX = ev.getX(newPointerIndex);
                         mActivePointerId = ev.getPointerId(newPointerIndex);

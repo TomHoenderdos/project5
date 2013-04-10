@@ -22,47 +22,47 @@ public class WordList extends SparseArray<WordListItem>{
 	}
 	
 	public void parseWords(Context ctx) {
- /*
-	    try {			
-	    	BufferedInputStream bis = new BufferedInputStream(ctx.getResources().openRawResource(R.raw.words));
-	    	BufferedReader reader = new BufferedReader(new InputStreamReader(bis));
-	    	
-	    	try {
-	    		String line = null; 
+ 
+//	    try {			
+//	    	BufferedInputStream bis = new BufferedInputStream(ctx.getResources().openRawResource(R.raw.words));
+//	    	BufferedReader reader = new BufferedReader(new InputStreamReader(bis));
+//	    	
+//	    	try {
+//	    		String line = null; 
+//
+//				while (bis.available() > 0) {
+//					reader.readLine();
+//				}
+//				
+//	    		while (( line = input.readLine()) != null){    				
+//    				int key = line.length();
+//    				if(this.get(key) == null) {
+//    					this.put(line.length(), new WordListItem());
+//    				}
+//    				this.get(key).add(line.toLowerCase());
+//	    		}
+//	    	}
+//	    	finally {
+//	    		bis.close();
+//	    		dis.close();
+//	    	}
+//	    }
+//	    catch (FileNotFoundException ex) {
+//	    }
+//	    catch (IOException ex){
+//	    }
 
-				while (bis.available() > 0) {
-					reader.readLine();
-				}
-				
-	    		while (( line = input.readLine()) != null){    				
-    				int key = line.length();
-    				if(this.get(key) == null) {
-    					this.put(line.length(), new WordListItem());
-    				}
-    				this.get(key).add(line.toLowerCase());
-	    		}
-	    	}
-	    	finally {
-	    		bis.close();
-	    		dis.close();
-	    	}
-	    }
-	    catch (FileNotFoundException ex) {
-	    }
-	    catch (IOException ex){
-	    }
-*/
-		/*String[] words = ctx.getResources().getStringArray(R.array.word_list);
+		String[] words = ctx.getResources().getStringArray(R.array.word_list);
 		for(String word : words) {
 			int key = word.length();
 			if(this.get(key) == null) {
-				this.put(word.length(), new WordListItem());
 			}
+			this.put(word.length(), new WordListItem());
 			this.get(key).add(word.toLowerCase());
 		}
 		for(int i = 0; i < this.size(); i++) {
 		   Collections.sort(this.valueAt(i));
-		}*/
+		}
 	}
 	
 	public String getRandomWord() {

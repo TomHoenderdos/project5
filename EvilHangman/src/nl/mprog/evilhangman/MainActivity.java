@@ -15,6 +15,8 @@ import android.app.Activity;
 import android.content.Context;
 import android.view.KeyEvent;
 import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.View.OnKeyListener;
 import android.view.Window;
@@ -54,11 +56,30 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
         this.words = new WordList(this);    
         this.NewGame();
         
-       /* for(int i = 0; i < words.size(); i++) {
-        	System.out.println(words.get(words.keyAt(i)).toString());
-        }*/
+        
+     // create RangeSeekBar as Integer range between 20 and 75
+//        Context context;
+//		RangeSeekBar<Integer> seekBar = new RangeSeekBar<Integer>(20, 75, context);
+//        seekBar.setOnRangeSeekBarChangeListener(
+//        		new OnRangeSeekBarChangeListener<Integer>() {
+//                @Override
+//                public void onRangeSeekBarValuesChanged(RangeSeekBar<?> bar, Integer minValue, Integer maxValue) {
+//                        // handle changed range values
+//                        Log.i(TAG, "User selected new range values: MIN=" + minValue + ", MAX=" + maxValue);
+//                }
+//        });
+//
+//        // add RangeSeekBar to pre-defined layout
+//        ViewGroup layout = (ViewGroup) findViewById(<your-layout-id>);
+//        layout.addView(seekBar);
+        
+        
+//       for(int i = 0; i < words.size(); i++) {
+//        	System.out.println(words.get(words.keyAt(i)).toString());
+//       }
     }
 
+    
     private void NewGame() {
     	this.current_attempts = 0;
     	this.max_attempts = 10;
@@ -148,6 +169,7 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
     
     public void WinGame() {
     	Toast.makeText(this, "You won the game!", Toast.LENGTH_LONG).show();
+    	NewGame();
     }
     
     public void LoseGame() {
@@ -166,6 +188,10 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
         }
     }
 
+    /*
+     * returns: void
+     * function: reset the keyboard
+     */
     private void ResetKeyboard() {
         KeyboardView keyboardView = (KeyboardView) findViewById(R.id.keyboardView);
         Keyboard keyboard = new Keyboard(this, R.layout.custom_keyboard);
@@ -173,13 +199,47 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
     }
     
     @Override
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onCreateOptionsMenu(android.view.Menu)
+     */
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
-        getMenuInflater().inflate(R.menu.main, menu);
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.game_menu, menu);
+//    	getMenuInflater().inflate(R.menu.main, menu);
         return true;
     }
 
+   
+    /*
+     * (non-Javadoc)
+     * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
+     */
+    public boolean onOptionsItemSelected(MenuItem item){
+    	switch (item.getItemId()){
+    	case R.id.action_refresh:
+    		NewGame();
+    		return true;
+    	case R.id.action_settings:
+    		showSettings();
+    		return true;
+    	default:
+    		return super.onOptionsItemSelected(item);
+    	}
+    }
 	
+    
+    /*
+     * Shows the settings for the game
+     */
+    public void showSettings(){
+    	
+    	
+    	
+    }
+    
+    
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
     	processKey(keyCode);    	
