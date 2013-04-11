@@ -15,84 +15,81 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	// All Static variables
     // Database Version
     private static final int DATABASE_VERSION = 1;
- 
+
     // Database Name
     private static final String DATABASE_NAME = "EvilHangman";
- 
+
     // Table names
     private static final String TABLE_SETTINGS = "settings";
     private static final String TABLE_HIGHSCORES = "highscores";
-    
+
     // Settings Columns names
     private static final String KEY_EVIL = "evil";
     private static final String KEY_MAX_AT = "maxattempts";
     private static final String KEY_MIN_WC = "min_wordcount";
     private static final String KEY_MAX_WC = "max_wordcount";
-    
+
     // Highscore Columns names
     private static final String KEY_NAME = "name";
-    private static final String KEY_DATE = "date";
     private static final String KEY_SCORE = "score";
- 
+
     public DatabaseHandler(Context context) {
         super(context, DATABASE_NAME, null, DATABASE_VERSION);
     }
-    
+
     //Ceating the Tables
     @Override
     public void onCreate(SQLiteDatabase db) {
         String CREATE_SETTINGS_TABLE = "CREATE TABLE " + TABLE_SETTINGS + "("
-                + KEY_EVIL + " BOOLEAN,"  
-        		+ KEY_MAX_AT + " INTEGER,"  
-        		+ KEY_MIN_WC + " INTEGER,"  
+                + KEY_EVIL + " BOOLEAN,"
+        		+ KEY_MAX_AT + " INTEGER,"
+        		+ KEY_MIN_WC + " INTEGER,"
         		+ KEY_MAX_WC + " INTEGER" + ")";
-        
+
         String CREATE_HIGHSCORES_TABLE = "CREATE TABLE " + TABLE_HIGHSCORES + "("
-                + KEY_NAME + " VARCHAR(255)," 
-        		+ KEY_DATE + " DATETIME," 
+                + KEY_NAME + " VARCHAR(255),"
         		+ KEY_SCORE + " INTEGER" + ")";
-        
+
         db.execSQL(CREATE_SETTINGS_TABLE);
         db.execSQL(CREATE_HIGHSCORES_TABLE);
     }
-    
+
     // Upgrading database
     @Override
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // Drop older table if existed
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_SETTINGS);
         db.execSQL("DROP TABLE IF EXISTS " + TABLE_HIGHSCORES);
- 
+
         // Create tables again
         onCreate(db);
     }
-    
+
     //Adding new Highscore
-    public void addHighscore(String name, Integer score){
+    public void addHighscore(Highscore highscore){
     	SQLiteDatabase db = this.getWritableDatabase();
-    	 
+
         ContentValues values = new ContentValues();
         Time now = new Time();
         now.setToNow();
-        
-        values.put(KEY_NAME, name); // Contact Name
-        values.put(KEY_DATE, now.toString());
-        values.put(KEY_SCORE, score); // Contact Phone Number
-     
+
+        values.put(KEY_NAME, highscore.getName());
+        values.put(KEY_SCORE, highscore.getScore());
+
         // Inserting Row
         db.insert(TABLE_HIGHSCORES, null, values);
         db.close(); // Closing database connection
     }
-    
+
     // Get all highscores
-    public List<Object> getHighscores(){
-        List<Object> Highscores = new ArrayList<Object>();
+    public Highscore getHighscores(){
+
     	// Select All Query
         String selectQuery = "SELECT  * FROM " + TABLE_HIGHSCORES;
-        
+
     	SQLiteDatabase db = this.getReadableDatabase();
     	Cursor cursor = db.rawQuery(selectQuery, null);
-    	
+
     	// Loop through all rows and add to the List
     	if (cursor.moveToFirst()){
     		do {
@@ -104,15 +101,15 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     	}
     	return Highscores;
     }
-    
+
     // Get settings
-    public List<Object> getSettings(){
+    public Settings getSettings(){
     	List<Object> Settings = new ArrayList<Object>();
     	String selectQuery = "SELECT  * FROM " + TABLE_SETTINGS;
-        
+
     	SQLiteDatabase db = this.getReadableDatabase();
     	Cursor cursor = db.rawQuery(selectQuery, null);
-    	
+
     	//Loop through the rows and add to the settings list
     	if(cursor.moveToFirst()){
     		Settings.add(cursor.getString(0)); //Evil
@@ -121,21 +118,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     		Settings.add(cursor.getString(3)); //Max Wordcount
     	} while (cursor.moveToNext());
     	return Settings;
-    	
+
     }
-	
+
     // Save settings
-    public void saveSettings(List<Object> Settings){
+    public void saveSettings(Settings settings){
     	 SQLiteDatabase db = this.getWritableDatabase();
-    	 
+
     	 ContentValues values = new ContentValues();
     	 values.put("KEY_EVIL", Settings.get(0).toString());
     	 values.put("KEY_MAX_AT", Settings.get(1).toString());
     	 values.put("KEY_MIN_WC", Settings.get(2).toString());
     	 values.put("KEY_MAX_WC", Settings.get(3).toString());
-    	 
+
     	// Inserting Row
         db.insert(TABLE_SETTINGS, null, values);
         db.close(); // Closing database connection
-    } 
+    }
 }
