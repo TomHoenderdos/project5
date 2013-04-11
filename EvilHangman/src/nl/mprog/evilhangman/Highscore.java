@@ -1,12 +1,17 @@
 package nl.mprog.evilhangman;
 
-public class Highscores {
+public class Highscore {
 	//	private vars
 	private String Name;
 	private Integer Score;
 
+	// Empty Constructor
+	public Highscore(){
+		
+	}
+	
 	//	Constructor
-	public Highscores(String name, Integer score) {
+	public Highscore(String name, Integer score) {
 		super();
 		Name = name;
 		Score = score;

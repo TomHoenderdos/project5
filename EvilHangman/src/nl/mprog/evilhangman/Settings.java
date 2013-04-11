@@ -8,6 +8,11 @@ public class Settings {
 	private Integer MaxAttempts;
 	private Integer MaxWordCount;
 
+	//Empty Constructor
+	public Settings(){
+		
+	}
+	
 	// Constructor
 	public Settings(Boolean evil, Integer maxAttempts, Integer minWordCount,
 			Integer maxWordCount) {

@@ -2,7 +2,6 @@ package nl.mprog.evilhangman;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -68,7 +67,6 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     //Get Wordlist
     public Wordlist getWordList(int wordLength){
-
         String selectQuery = "SELECT * FROM WordList WHERE length(name) == " + wordLength;
     }
 
@@ -92,7 +90,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Get all highscores
-    public Highscore getHighscores(){
+    public List<Highscore> getHighscores(){
         List<Highscore> highscoreList = new ArrayList<Highscore>();
 
         // Select All from table highscore
@@ -106,7 +104,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     		do {
     			Highscore highscore = new Highscore();
                 highscore.setName(cursor.getString(0)); //Name
-    			highscore.setScore(cursor.getString(1)); //Score
+    			highscore.setScore(Integer.parseInt(cursor.getString(1))); //Score
                 highscoreList.add(highscore);
     		} while (cursor.moveToNext());
     	}
@@ -114,7 +112,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
     // Get settings
-    public Settings getSettings(){
+    public List<Settings> getSettings(){
     	List<Settings> settingsList = new ArrayList<Settings>();
 
         // Select all from table settings
@@ -126,11 +124,11 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     	//Loop through the rows and add to the settings list
     	if(cursor.moveToFirst()){
     		Settings setting = new Settings();
-            setting.setEvil(cursor.getString(0)); //Evil
-    		setting.setMaxAttempts(cursor.getString(1)); //Max Attempts
-    		setting.setMaxWordCount(cursor.getString(2)); //Min Wordcount
-    		setting.setMinWordCount(cursor.getString(3)); //Max Wordcount
-            settingsList.add(setting)
+            setting.setEvil(Boolean.parseBoolean(cursor.getString(0))); //Evil
+    		setting.setMaxAttempts(Integer.parseInt(cursor.getString(1))); //Max Attempts
+    		setting.setMaxWordCount(Integer.parseInt(cursor.getString(2))); //Min Wordcount
+    		setting.setMinWordCount(Integer.parseInt(cursor.getString(3))); //Max Wordcount
+            settingsList.add(setting);
     	} while (cursor.moveToNext());
 
         // return list of settings
@@ -143,10 +141,10 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     	 SQLiteDatabase db = this.getWritableDatabase();
 
     	 ContentValues values = new ContentValues();
-    	 values.put("KEY_EVIL", Settings.get(0).toString());
-    	 values.put("KEY_MAX_AT", Settings.get(1).toString());
-    	 values.put("KEY_MIN_WC", Settings.get(2).toString());
-    	 values.put("KEY_MAX_WC", Settings.get(3).toString());
+    	 values.put("KEY_EVIL", settings.getEvil());
+    	 values.put("KEY_MAX_AT", settings.getMaxAttempts());
+    	 values.put("KEY_MIN_WC", settings.getMinWordCount());
+    	 values.put("KEY_MAX_WC", settings.getMaxWordCount());
 
     	// Inserting Row
         db.insert(TABLE_SETTINGS, null, values);
