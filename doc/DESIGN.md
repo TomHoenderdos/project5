@@ -29,6 +29,14 @@ None
 *	Class WordListItem
 	*	String GetEvilWord(String old_word, String matches, ArrayList<Character> guessed_characters)
 <br />
+*	Class DatabaseHandler
+	* void onCreate()
+	* void onUpgrade()
+	* void addHighscore(String name, Integer score)
+	* List<Object> getHighscore()
+	* List<Object> getSettings()
+	* void saveSettings(List<Object> Settings)
+<br />
 
 ### Features Summary
 *	Users find themselve in the game immediately upon launch.
@@ -42,5 +50,9 @@ None
 *	A list of highscores / played games can be accesses aswell.
 
 ### UI Sketches
-![Picture 1](./design1.png)
-![Picture 2](./design2.png)
+![Picture 1](./Game_view%20(1).png)
+![Picture 2](./Game_view%20(2).png)
+![Picture 3](./Settings%20(3).png)
+
+### Moqup
+[https://moqups.com/TomPC/ArzdK2Pq](https://moqups.com/TomPC/ArzdK2Pq)
