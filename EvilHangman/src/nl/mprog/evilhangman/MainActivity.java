@@ -12,7 +12,9 @@ import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.ActionBar;
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -22,6 +24,7 @@ import android.view.View.OnKeyListener;
 import android.view.Window;
 import android.view.WindowManager.LayoutParams;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -36,6 +39,7 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
 	private int max_word_length;
 	private ArrayList<Character> guessed_characters = new ArrayList<Character>();
 	private String match_holder = new String();
+	private boolean game_started = false;
 	
 	
 	
@@ -84,16 +88,34 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
 
     
     private void newGame() {
-    	this.current_attempts = 0;
-    	this.max_attempts = 10;
-        this.current_word = words.getRandomWord().toLowerCase(Locale.getDefault());
-        this.guessed_characters.clear();
+    	if(this.game_started) {
+        	AlertDialog.Builder alert = new AlertDialog.Builder(this);
 
-    	this.updateWord();
-    	this.updateAttempts();
-    	this.resetKeyboard();
-    	
-    	Toast.makeText(this, "New Word:"+this.current_word, Toast.LENGTH_LONG).show();
+        	alert.setTitle("New Game");
+        	alert.setMessage("Are you sure you want to start a new game?");
+	    	alert.setCancelable(false);
+
+	    	alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+	    		public void onClick(DialogInterface dialog, int whichButton) {
+	    			game_started = false;
+	      			newGame();
+	    		}
+	    	});
+	    	alert.setNegativeButton("No", null);
+        	alert.show();
+    	} else {
+	    	this.current_attempts = 0;
+	    	this.max_attempts = 10;
+	        this.current_word = words.getRandomWord().toLowerCase(Locale.getDefault());
+	        this.guessed_characters.clear();
+	        this.game_started = true;
+	
+	    	this.updateWord();
+	    	this.updateAttempts();
+	    	this.resetKeyboard();
+	    	
+	    	Toast.makeText(this, "New Word:"+this.current_word, Toast.LENGTH_LONG).show();		
+    	}
     }
     
     private void updateWord() {
@@ -171,12 +193,46 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
     }
     
     public void winGame() {
-    	Toast.makeText(this, "You won the game!", Toast.LENGTH_LONG).show();
-    	newGame();
+    	//Toast.makeText(this, "You won the game!", Toast.LENGTH_LONG).show();
+        this.game_started = false;
+    	endGamePopup("You won!", true);
     }
     
     public void loseGame() {
-    	Toast.makeText(this, "You lost the game!", Toast.LENGTH_LONG).show();
+    	//Toast.makeText(this, "You lost the game!", Toast.LENGTH_LONG).show();
+        this.game_started = false;
+    	endGamePopup("You suck!", false);
+    }
+    
+    public void endGamePopup(String title, boolean show_highscore) {
+    	AlertDialog.Builder alert = new AlertDialog.Builder(this);
+
+    	alert.setTitle(title);
+
+    	alert.setCancelable(false);
+    	if(show_highscore) {
+    		alert.setMessage("Fill in your name for your highscore:");
+
+	    	final EditText input = new EditText(this);
+	    	alert.setView(input);
+	    	
+	    	alert.setPositiveButton("New Game", new DialogInterface.OnClickListener() {
+	    		public void onClick(DialogInterface dialog, int whichButton) {
+	    			String value = input.getText().toString();
+	    			System.out.println(value);
+	      			newGame();
+	    		}
+	    	});
+    	}
+    	else {
+    	  	alert.setPositiveButton("New Game", new DialogInterface.OnClickListener() {
+	    		public void onClick(DialogInterface dialog, int whichButton) {
+	      			newGame();
+	    		}
+	    	});
+    	}
+    	
+    	alert.show();
     }
     
     private void setKeyboardKeyLabel(int key_press, String label) {
