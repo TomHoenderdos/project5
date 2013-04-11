@@ -7,7 +7,7 @@ public class WordListItem extends ArrayList<String> {
 
 	private static final long serialVersionUID = 1L;
 
-	public String GetEvilWord(String old_word, String match_holder, ArrayList<Character> guessed_characters, char latest_char) {
+	public String getEvilWord(String old_word, String match_holder, ArrayList<Character> guessed_characters, char latest_char) {
 		String new_word = old_word;				
 		int new_score = (int) Double.NEGATIVE_INFINITY;
 		char[] matches = match_holder.toCharArray();

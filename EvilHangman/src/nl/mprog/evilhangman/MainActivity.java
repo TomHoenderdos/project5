@@ -54,7 +54,7 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
         keyboardView.setOnKeyboardActionListener(this);
         
         this.words = new WordList(this);    
-        this.NewGame();
+        this.newGame();
         
         
      // create RangeSeekBar as Integer range between 20 and 75
@@ -80,20 +80,20 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
     }
 
     
-    private void NewGame() {
+    private void newGame() {
     	this.current_attempts = 0;
     	this.max_attempts = 10;
         this.current_word = words.getRandomWord().toLowerCase(Locale.getDefault());
         this.guessed_characters.clear();
 
-    	this.UpdateWord();
-    	this.UpdateAttempts();
-    	this.ResetKeyboard();
+    	this.updateWord();
+    	this.updateAttempts();
+    	this.resetKeyboard();
     	
     	Toast.makeText(this, "New Word:"+this.current_word, Toast.LENGTH_LONG).show();
     }
     
-    private void UpdateWord() {
+    private void updateWord() {
         this.match_holder = "";
         
     	TextView word_view = (TextView) this.findViewById(R.id.word_view);
@@ -111,13 +111,13 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
     	word_view.setText(placeholder);
     }
     
-    private void UpdateAttempts() {
+    private void updateAttempts() {
     	TextView attempts_view = (TextView) this.findViewById(R.id.attempts_view);
     	attempts_view.setText("Attempts "+this.current_attempts+"/10");    	  
     	
     	if(this.current_attempts == this.max_attempts) {
-    		this.LoseGame();
-    		this.NewGame();
+    		this.loseGame();
+    		this.newGame();
     	}
     }
 
@@ -132,51 +132,51 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
 		        	//Toast.makeText(this, "You already guessed " + key_press + ".", Toast.LENGTH_LONG).show();
 		    	} else {
 		        	if(this.current_word.contains(String.valueOf(key_press))) {      		
-		        		this.CorrectAnswer(key_press);    
+		        		this.correctAnswer(key_press);    
 		        	} else {
 			        	guessed_characters.add(key_press);
-		        		this.SetKeyboardKeyLabel(key_press, "–");
-		        		this.WrongAnswer();        		
+		        		this.setKeyboardKeyLabel(key_press, "–");
+		        		this.wrongAnswer();        		
 		        	}
 		    	}
 	    	}
     	}
     }    
-    public void CorrectAnswer(char key_press) {  
+    public void correctAnswer(char key_press) {  
     	String old_word = this.current_word;
     	guessed_characters.add(key_press);	  	
-    	this.current_word = this.words.getCurrent_word_list_model().GetEvilWord(this.current_word, this.match_holder, this.guessed_characters, key_press).toLowerCase();
+    	this.current_word = this.words.getCurrent_word_list_model().getEvilWord(this.current_word, this.match_holder, this.guessed_characters, key_press).toLowerCase();
     	if(this.current_word.equals(old_word)) {
-    		this.SetKeyboardKeyLabel(key_press, "✔");	
+    		this.setKeyboardKeyLabel(key_press, "✔");	
     		
-        	this.UpdateWord(); 
+        	this.updateWord(); 
         	if(!this.match_holder.contains("_")) {
-        		this.WinGame();
+        		this.winGame();
         	}
     	}
     	else {    	
         	Toast.makeText(this, "New word:" + this.current_word, Toast.LENGTH_LONG).show();
-    		this.SetKeyboardKeyLabel(key_press, "–");
-    		WrongAnswer();  	
-        	this.UpdateWord(); 	
+    		this.setKeyboardKeyLabel(key_press, "–");
+    		wrongAnswer();  	
+        	this.updateWord(); 	
     	}
     }
     
-    public void WrongAnswer() {
+    public void wrongAnswer() {
     	this.current_attempts++;
-    	this.UpdateAttempts();
+    	this.updateAttempts();
     }
     
-    public void WinGame() {
+    public void winGame() {
     	Toast.makeText(this, "You won the game!", Toast.LENGTH_LONG).show();
-    	NewGame();
+    	newGame();
     }
     
-    public void LoseGame() {
+    public void loseGame() {
     	Toast.makeText(this, "You lost the game!", Toast.LENGTH_LONG).show();
     }
     
-    private void SetKeyboardKeyLabel(int key_press, String label) {
+    private void setKeyboardKeyLabel(int key_press, String label) {
         KeyboardView keyboardView = (KeyboardView) findViewById(R.id.keyboardView);
         Keyboard keyboard = keyboardView.getKeyboard();
         List<Key> keys = keyboard.getKeys();
@@ -192,7 +192,7 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
      * returns: void
      * function: reset the keyboard
      */
-    private void ResetKeyboard() {
+    private void resetKeyboard() {
         KeyboardView keyboardView = (KeyboardView) findViewById(R.id.keyboardView);
         Keyboard keyboard = new Keyboard(this, R.layout.custom_keyboard);
         keyboardView.setKeyboard(keyboard);    	
@@ -219,7 +219,7 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
     public boolean onOptionsItemSelected(MenuItem item){
     	switch (item.getItemId()){
     	case R.id.action_refresh:
-    		NewGame();
+    		newGame();
     		return true;
     	case R.id.action_settings:
     		showSettings();
