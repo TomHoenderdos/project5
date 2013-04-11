@@ -50,9 +50,9 @@ None
 *	A list of highscores / played games can be accesses aswell.
 
 ### UI Sketches
-![Picture 1](./Game_view%20(1).png)
-![Picture 2](./Game_view%20(2).png)
-![Picture 3](./Settings%20(3).png)
+![Picture 1](./Game_view_1.png)
+![Picture 2](./Game_view_2.png)
+![Picture 3](./Settings.png)
 
 ### Moqup
 [https://moqups.com/TomPC/ArzdK2Pq](https://moqups.com/TomPC/ArzdK2Pq)
