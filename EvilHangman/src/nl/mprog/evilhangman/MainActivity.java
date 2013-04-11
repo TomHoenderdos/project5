@@ -52,10 +52,13 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
         keyboardView.setEnabled(true);
         keyboardView.setPreviewEnabled(true);      
         keyboardView.setOnKeyboardActionListener(this);
+
+        DatabaseHandler db = new DatabaseHandler(this);
+        String[] s = db.getWords();
         
-        this.words = new WordList(this);    
-        this.newGame();
-        
+        /*this.words = new WordList(this);    
+        this.newGame();*/
+               
         
      // create RangeSeekBar as Integer range between 20 and 75
 //        Context context;

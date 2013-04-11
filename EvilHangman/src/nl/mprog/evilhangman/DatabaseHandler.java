@@ -16,7 +16,7 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     private static final int DATABASE_VERSION = 1;
 
     // Database Name
-    private static final String DATABASE_NAME = "EvilHangman";
+    private static final String DATABASE_NAME = "EvilHangman.sqlite";
 
     // Table names
     private static final String TABLE_SETTINGS = "settings";
@@ -65,15 +65,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     }
 
 
-    //Get Wordlist
-    public Wordlist getWordList(int wordLength){
-        String selectQuery = "SELECT * FROM WordList WHERE length(name) == " + wordLength;
-    }
+    public String[] getWords(){
+    	
+    	// Select All Query
+        String selectQuery = "SELECT * FROM WordList";// WHERE length(name) == " + wordLength;
 
-
-    public Wordlist getWordList(){
-
-        String selectQuery = "Select * FROM WordList";
+    	SQLiteDatabase db = this.getReadableDatabase();
+    	Cursor cursor = db.rawQuery(selectQuery, null);
+    	
+    	int count = cursor.getCount();
+    	String[] list = new String[count];
+    	
+    	// Loop through all rows and add to the List
+    	if (cursor.moveToFirst()){    		
+    		while (cursor.moveToNext()) {    			
+    			list[cursor.getPosition()] = cursor.getString(1);
+    		}
+    	}
+    	return list;
     }
 
     //Adding new Highscore
