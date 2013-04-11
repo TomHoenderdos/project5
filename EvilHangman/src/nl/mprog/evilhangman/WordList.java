@@ -56,8 +56,8 @@ public class WordList extends SparseArray<WordListItem>{
 		for(String word : words) {
 			int key = word.length();
 			if(this.get(key) == null) {
+				this.put(word.length(), new WordListItem());
 			}
-			this.put(word.length(), new WordListItem());
 			this.get(key).add(word.toLowerCase());
 		}
 		for(int i = 0; i < this.size(); i++) {
