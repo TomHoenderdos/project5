@@ -65,14 +65,24 @@ public class DatabaseHandler extends SQLiteOpenHelper {
         onCreate(db);
     }
 
+
+    //Get Wordlist
+    public Wordlist getWordList(int wordLength){
+
+        String selectQuery = "SELECT * FROM WordList WHERE length(name) == " + wordLength;
+    }
+
+
+    public Wordlist getWordList(){
+
+        String selectQuery = "Select * FROM WordList";
+    }
+
     //Adding new Highscore
     public void addHighscore(Highscore highscore){
     	SQLiteDatabase db = this.getWritableDatabase();
 
         ContentValues values = new ContentValues();
-        Time now = new Time();
-        now.setToNow();
-
         values.put(KEY_NAME, highscore.getName());
         values.put(KEY_SCORE, highscore.getScore());
 
@@ -83,8 +93,9 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 
     // Get all highscores
     public Highscore getHighscores(){
+        List<Highscore> highscoreList = new ArrayList<Highscore>();
 
-    	// Select All Query
+        // Select All from table highscore
         String selectQuery = "SELECT  * FROM " + TABLE_HIGHSCORES;
 
     	SQLiteDatabase db = this.getReadableDatabase();
@@ -93,31 +104,37 @@ public class DatabaseHandler extends SQLiteOpenHelper {
     	// Loop through all rows and add to the List
     	if (cursor.moveToFirst()){
     		do {
-    			List<Object> Highscore = new ArrayList<Object>();
-    			Highscore.add(cursor.getString(0));
-    			Highscore.add(cursor.getString(2));
-    			Highscores.add(Highscore);
+    			Highscore highscore = new Highscore();
+                highscore.setName(cursor.getString(0)); //Name
+    			highscore.setScore(cursor.getString(1)); //Score
+                highscoreList.add(highscore);
     		} while (cursor.moveToNext());
     	}
-    	return Highscores;
+    	return highscoreList;
     }
 
     // Get settings
     public Settings getSettings(){
-    	List<Object> Settings = new ArrayList<Object>();
-    	String selectQuery = "SELECT  * FROM " + TABLE_SETTINGS;
+    	List<Settings> settingsList = new ArrayList<Settings>();
+
+        // Select all from table settings
+        String selectQuery = "SELECT  * FROM " + TABLE_SETTINGS;
 
     	SQLiteDatabase db = this.getReadableDatabase();
     	Cursor cursor = db.rawQuery(selectQuery, null);
 
     	//Loop through the rows and add to the settings list
     	if(cursor.moveToFirst()){
-    		Settings.add(cursor.getString(0)); //Evil
-    		Settings.add(cursor.getString(1)); //Max Attempts
-    		Settings.add(cursor.getString(2)); //Min Wordcount
-    		Settings.add(cursor.getString(3)); //Max Wordcount
+    		Settings setting = new Settings();
+            setting.setEvil(cursor.getString(0)); //Evil
+    		setting.setMaxAttempts(cursor.getString(1)); //Max Attempts
+    		setting.setMaxWordCount(cursor.getString(2)); //Min Wordcount
+    		setting.setMinWordCount(cursor.getString(3)); //Max Wordcount
+            settingsList.add(setting)
     	} while (cursor.moveToNext());
-    	return Settings;
+
+        // return list of settings
+        return settingsList;
 
     }
 
