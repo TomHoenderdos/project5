@@ -1,12 +1,5 @@
 package nl.mprog.evilhangman;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedReader;
-import java.io.DataInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.util.Collections;
 import java.util.Random;
 
@@ -16,9 +9,12 @@ import android.util.SparseArray;
 public class WordList extends SparseArray<WordListItem>{
 	
 	private WordListItem current_word_list_model;
+	private Context context = null;
 	
 	public WordList(Context ctx) {
+		
 		this.parseWords(ctx);
+		
 	}
 	
 	public void parseWords(Context ctx) {
@@ -51,7 +47,7 @@ public class WordList extends SparseArray<WordListItem>{
 //	    }
 //	    catch (IOException ex){
 //	    }
-
+		
 		String[] words = ctx.getResources().getStringArray(R.array.word_list);
 		for(String word : words) {
 			int key = word.length();

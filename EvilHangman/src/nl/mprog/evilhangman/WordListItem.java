@@ -1,7 +1,6 @@
 package nl.mprog.evilhangman;
 
 import java.util.ArrayList;
-import java.util.Random;
 
 public class WordListItem extends ArrayList<String> {
 
@@ -11,11 +10,11 @@ public class WordListItem extends ArrayList<String> {
 		String new_word = old_word;				
 		int new_score = (int) Double.NEGATIVE_INFINITY;
 		char[] matches = match_holder.toCharArray();
-		
+
 		for (String s : this) {
 			char[] words = s.toCharArray();
 			int word_score = 0;
-			
+
 			int i = 0;
 			for(; i < matches.length; i++) {
 				if(matches[i] == '_') { 
@@ -23,7 +22,7 @@ public class WordListItem extends ArrayList<String> {
 						word_score--;
 						continue;
 					}
-					
+
 					boolean outside_break = false;
 					for(char c : guessed_characters) {
 						if(words[i] == c) {
@@ -32,10 +31,10 @@ public class WordListItem extends ArrayList<String> {
 						}
 					}
 					if(outside_break) break;
-					
+
 					continue;
 				}
-				
+
 				if(match_holder.charAt(i) != words[i]) {
 					break;
 				}
@@ -50,4 +49,3 @@ public class WordListItem extends ArrayList<String> {
 		return new_word;
 	}	
 }
- 

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:example="http://schemas.android.com/apk/res/nl.mprog.evilhangman">
+    
+    <nl.mprog.evilhangman.SeekbarPreference
+    android:key="sbp_WordCount"
+	android:title="@string/word_count_title"
+	android:dialogTitle="@string/word_count_title"
+	android:summary="@string/word_count_summ"
+	android:persistent="true"
+	android:defaultValue="4"
+	example:minValue="2"
+	example:maxValue="26" />
+    
+    <nl.mprog.evilhangman.SeekbarPreference
+    android:key="sbp_MaxAttempts"
+	android:title="@string/max_attempts"
+	android:dialogTitle="@string/max_attempts"
+	android:summary="@string/max_attempts_summ"
+	android:persistent="true"
+	android:defaultValue="10"
+	example:minValue="2"
+	example:maxValue="26" />
+    
+</PreferenceScreen>
