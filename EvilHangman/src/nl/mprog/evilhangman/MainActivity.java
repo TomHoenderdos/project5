@@ -10,37 +10,34 @@ import android.inputmethodservice.KeyboardView;
 import android.inputmethodservice.KeyboardView.OnKeyboardActionListener;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
-import android.app.ActionBar;
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnKeyListener;
 import android.view.Window;
-import android.view.WindowManager.LayoutParams;
-import android.view.inputmethod.InputMethodManager;
 import android.widget.EditText;
+import android.widget.SeekBar;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
-@SuppressLint("DefaultLocale")
+@SuppressLint({ "DefaultLocale", "NewApi", "ShowToast" })
 public class MainActivity extends Activity implements OnKeyboardActionListener{
 
 	private WordList words;
 	private String current_word = new String();
 	private int current_attempts;
-	private int max_attempts = 10;
-	private int min_word_length;
-	private int max_word_length;
+	private int max_attempts;
+	private int word_length;
 	private ArrayList<Character> guessed_characters = new ArrayList<Character>();
 	private String match_holder = new String();
 	private boolean game_started = false;
-	
+	private DatabaseHandler dbh = null;
+	private WordHelper word;
 	
 	
     @Override
@@ -50,6 +47,8 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
         this.requestWindowFeature(Window.FEATURE_NO_TITLE);  
         setContentView(R.layout.activity_main);
 
+        this.word = new WordHelper(this);
+        
         KeyboardView keyboardView = (KeyboardView) findViewById(R.id.keyboardView);
         Keyboard keyboard = new Keyboard(this, R.layout.custom_keyboard);
         keyboardView.setKeyboard(keyboard);
@@ -96,7 +95,8 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
 	    	alert.setCancelable(false);
 
 	    	alert.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
-	    		public void onClick(DialogInterface dialog, int whichButton) {
+	    		@Override
+				public void onClick(DialogInterface dialog, int whichButton) {
 	    			game_started = false;
 	      			newGame();
 	    		}
@@ -105,7 +105,18 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
         	alert.show();
     	} else {
 	    	this.current_attempts = 0;
-	    	this.max_attempts = 10;
+	    	
+	    	SettingsModel set = new SettingsModel();
+	    	
+	    	set.setEvil(true);
+	    	set.setWordCount(20);
+	    	set.setMaxAttempts(6);
+	    	
+	    	SettingsHelper sh = new SettingsHelper(this);
+//	    	SettingsModel shm = new SettingsModel();
+	    	
+	    	
+	    	this.max_attempts = sh.getSettings().getMaxAttempts();
 	        this.current_word = words.getRandomWord().toLowerCase(Locale.getDefault());
 	        this.guessed_characters.clear();
 	        this.game_started = true;
@@ -138,7 +149,7 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
     
     private void updateAttempts() {
     	TextView attempts_view = (TextView) this.findViewById(R.id.attempts_view);
-    	attempts_view.setText("Attempts "+this.current_attempts+"/10");    	  
+    	attempts_view.setText("Attempts "+this.current_attempts+"/"+this.max_attempts);    	  
     	
     	if(this.current_attempts == this.max_attempts) {
     		this.loseGame();
@@ -217,7 +228,8 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
 	    	alert.setView(input);
 	    	
 	    	alert.setPositiveButton("New Game", new DialogInterface.OnClickListener() {
-	    		public void onClick(DialogInterface dialog, int whichButton) {
+	    		@Override
+				public void onClick(DialogInterface dialog, int whichButton) {
 	    			String value = input.getText().toString();
 	    			System.out.println(value);
 	      			newGame();
@@ -226,7 +238,8 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
     	}
     	else {
     	  	alert.setPositiveButton("New Game", new DialogInterface.OnClickListener() {
-	    		public void onClick(DialogInterface dialog, int whichButton) {
+	    		@Override
+				public void onClick(DialogInterface dialog, int whichButton) {
 	      			newGame();
 	    		}
 	    	});
@@ -275,7 +288,8 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
      * (non-Javadoc)
      * @see android.app.Activity#onOptionsItemSelected(android.view.MenuItem)
      */
-    public boolean onOptionsItemSelected(MenuItem item){
+    @Override
+	public boolean onOptionsItemSelected(MenuItem item){
     	switch (item.getItemId()){
     	case R.id.action_refresh:
     		newGame();
@@ -293,11 +307,36 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
      * Shows the settings for the game
      */
     public void showSettings(){
-    	
-    	
-    	
+    	Intent intent = new Intent(getBaseContext(), Preferences.class);
+//    	intent.
     }
     
+    public void saveSettingsAndRestart(){
+    	// save settings
+    	
+    	SettingsModel st = new SettingsModel();
+    	
+    	// Evil
+    	Switch evil = (Switch) findViewById(R.id.switch1);
+    	st.setEvil(evil.isChecked());
+    	
+    	// MaxAttempts
+    	SeekBar maxAttempts = (SeekBar) findViewById(R.id.seekBar2);
+    	st.setMaxAttempts(maxAttempts.getProgress());
+    	
+    	// WordCount    	
+    	SeekBar wordCount = (SeekBar) findViewById(R.id.seekBar1);
+    	st.setWordCount(wordCount.getProgress());
+//    	Toast.makeText(this, "Settings => MaxAT:" + st.getMaxAttempts() + ", WordCount:" + st.getWordCount() + ", Evil:" + st.getEvil(), Toast.LENGTH_LONG);
+    	SettingsHelper sh = new SettingsHelper(this);
+    	sh.saveSettings(st);
+    	
+    	newGame();
+    }
+    
+    public void cancelSettings(){
+    	setContentView(R.layout.activity_main);
+    }
     
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -305,7 +344,8 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
     	return super.onKeyDown(keyCode, event);
     }
 
-    public void onKey(int primaryCode, int[] keyCodes) {
+    @Override
+	public void onKey(int primaryCode, int[] keyCodes) {
     	processKey(primaryCode);
     }
     
