@@ -1,2 +1,5 @@
 eclipse.preferences.version=1
-encoding//src/nl/mprog/evilhangman/MainActivity.java=UTF-8
+encoding//src/nl/mprog/evilhangman/controllers/EvilGame.java=UTF-8
+encoding//src/nl/mprog/evilhangman/controllers/Game.java=UTF-8
+encoding//src/nl/mprog/evilhangman/controllers/MainActivity.java=UTF-8
+encoding//src/nl/mprog/evilhangman/controllers/NormalGame.java=UTF-8

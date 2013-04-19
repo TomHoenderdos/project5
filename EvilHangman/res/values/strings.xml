@@ -14,5 +14,15 @@
     <string name="word_count_title">Word Count</string>
     <string name="max_attempts">Max Attempts</string>
     <string name="max_attempts_summ">Change the max attempts in your game</string>
+    
+    <string name="win_game_message">You win!</string>
+    <string name="lose_game_message">You suck!</string>
+    <string name="new_game_title">New Game</string>
+    <string name="new_game_message">Are you sure you want to start a new game?</string>
+    <string name="highscore_message">Fill in your name for your highscore:</string>
+    <string name="positive_button_text">Yes</string>
+    <string name="negative_button_text">No</string>
+    <string name="keyboard_button_correct">✔</string>
+    <string name="keyboard_button_incorrect">–</string>
 
 </resources>
