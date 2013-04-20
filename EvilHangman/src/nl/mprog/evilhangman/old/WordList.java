@@ -1,4 +1,4 @@
-package nl.mprog.evilhangman.models;
+package nl.mprog.evilhangman.old;
 
 import java.util.Collections;
 import java.util.Random;

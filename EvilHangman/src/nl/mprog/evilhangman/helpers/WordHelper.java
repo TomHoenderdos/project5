@@ -70,9 +70,11 @@ public enum WordHelper {
 		cursor.moveToFirst();
 		String word = cursor.getString(0);
 
+		
 		cursor.close();
 		this.close();
 		return word;
+		//return "MAGNETRON";
 	}
 	
 	/**
@@ -84,38 +86,69 @@ public enum WordHelper {
 	 */
 	public String getEvilWord(String currentWord, String matchPattern, ArrayList<Character> usedCharacters, char pressedKey){
 		
+//		long m1 = System.currentTimeMillis();
+	
+		// generate globbing part for non guessed characters
 		StringBuilder glob = new StringBuilder();
 		
 		glob.append('[');
 		for(char c = 'a'; c <= 'z'; c++) {
 			if(!usedCharacters.contains(c) && c != pressedKey) {
-				glob.append(c).append(Character.toUpperCase(c));
+				glob.append(Character.toUpperCase(c));
 			}
 		}
 		glob.append(']');
+
+//		long m2 = System.currentTimeMillis();
+//		System.out.println("getEvilWord glob:" + (m1-m2) + "ms");
+//		m1 = System.currentTimeMillis();
+		
+		// generate the globbing part of every character
 		
 		StringBuilder large_glob = new StringBuilder();
+		
 		for(int i = 0; i < currentWord.length(); i++) {
-			large_glob.append(glob);
+			StringBuilder newGlob = glob;
+			char c = currentWord.charAt(i);
+			if(c != '_') {
+				int idx = newGlob.indexOf(String.valueOf(Character.toUpperCase(c)));
+				if(idx != -1) {
+					newGlob.replace(idx, idx+1, "");
+				}
+			}
+			large_glob.append(newGlob);
 		}
 		
-		open();
+//		m2 = System.currentTimeMillis();
+//		System.out.println("getEvilWord largeglob:" + (m1-m2) + "ms");
+//		m1 = System.currentTimeMillis();
+		
+		// execute query
+		this.open();
 
-		// to do:
-		// seperate thread
-		// sometimes adds characters that were guessed already
-		String selectQuery = "SELECT name,MIN(LENGTH(name) - LENGTH(REPLACE(name, '" + Character.toUpperCase(pressedKey) + "', ''))) " +
-				"From words " +
-				"WHERE length(name) == " + Integer.toString(currentWord.length()) + 
-				" AND name like '" + matchPattern + "'" + 
-				(large_glob.length()!=0 ? " AND name glob '" + large_glob + "'" : "") + ";";
+		String selectQuery = "SELECT name, LENGTH(name) as nameLength " +
+		"FROM words " +
+		"WHERE nameLength == " + Integer.toString(currentWord.length()) + " " +
+		"AND name LIKE '" + matchPattern + "' " +
+		"AND name GLOB '" + large_glob + "' " +
+		"GROUP BY rowid " +
+		"HAVING nameLength - LENGTH(REPLACE(name, 'E', '')) = " +
+			"(SELECT MIN(LENGTH(name) - LENGTH(REPLACE(name, 'E', ''))))" +
+		"ORDER BY RANDOM() LIMIT 1";			
+
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		cursor.moveToFirst();
-		
-		String word = cursor.getString(0);
+
+		String word = null;
+		if(cursor.getCount() > 0) { 
+			word = cursor.getString(0);
+		}
 
 		cursor.close();
-		close();
+		this.close();
+
+//		m2 = System.currentTimeMillis();
+//		System.out.println("getEvilWord query:" + (m1-m2) + "ms");
 		return word == null ? currentWord : word.toLowerCase();
 	}
 }

@@ -86,7 +86,9 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
 //       }
     }
 
-   
+    /**
+    * Callback called by a game
+    */
     public void onGameFinished() {
         mainGame = new EvilGame(this);
     }
@@ -96,25 +98,37 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
      * @param key_press
      * @param label
      */
-    public void setKeyboardKeyLabel(int key_press, String label) {
-        KeyboardView keyboardView = (KeyboardView) findViewById(R.id.keyboardView);
-        Keyboard keyboard = keyboardView.getKeyboard();
-        List<Key> keys = keyboard.getKeys();
-        for(Key key : keys) {
-        	if(key.label.toString().toLowerCase().charAt(0) == key_press) {
-        		key.label = label;
-        		keyboardView.invalidateKey(keys.indexOf(key));
-        	}
-        }
+    public void setKeyboardKeyLabel(final int key_press, final String label) {
+    	this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+		        KeyboardView keyboardView = (KeyboardView) findViewById(R.id.keyboardView);
+		        Keyboard keyboard = keyboardView.getKeyboard();
+		        List<Key> keys = keyboard.getKeys();
+		        for(Key key : keys) {
+		        	if(key.label.toString().toLowerCase().charAt(0) == key_press) {
+		        		key.label = label;
+		        		keyboardView.invalidateKey(keys.indexOf(key));
+		        	}
+		        }
+			}    		
+    	});
     }
 
     /**
      * Returns the visual keyboard to default
      */
     public void resetKeyboard() {
-        KeyboardView keyboardView = (KeyboardView) findViewById(R.id.keyboardView);
-        Keyboard keyboard = new Keyboard(this, R.layout.custom_keyboard);
-        keyboardView.setKeyboard(keyboard);    	
+    	this.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+		        KeyboardView keyboardView = (KeyboardView) findViewById(R.id.keyboardView);
+		        Keyboard keyboard = new Keyboard(MainActivity.this, R.layout.custom_keyboard);
+		        keyboardView.setKeyboard(keyboard);    	
+			}    		
+    	});
     }
     
     /**

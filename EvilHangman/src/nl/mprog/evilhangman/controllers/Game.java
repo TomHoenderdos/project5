@@ -3,6 +3,8 @@ package nl.mprog.evilhangman.controllers;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import nl.mprog.evilhangman.R;
 import nl.mprog.evilhangman.R.id;
@@ -14,7 +16,9 @@ import android.app.AlertDialog;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.view.KeyEvent;
+import android.view.View;
 import android.widget.EditText;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -22,7 +26,10 @@ public abstract class Game {
 	private String currentWord = new String();
 	private String wordPattern = new String();
 	private ArrayList<Character> badCharacters = new ArrayList<Character>();
-	private ArrayList<Character> goodCharacters = new ArrayList<Character>();
+	private ArrayList<Character> goodCharacters = new ArrayList<Character>();    
+	
+	 // for processing guesses in correct order
+    private final ExecutorService executor = Executors.newSingleThreadExecutor();
 	
 	private int currentAttempts;
 
@@ -84,7 +91,7 @@ public abstract class Game {
 	    	this.updateAttempts();
 	    	ctx.resetKeyboard();
 	    	
-	    	Toast.makeText(this.ctx, "New Word:"+this.currentWord, Toast.LENGTH_LONG).show();	
+	    	//Toast.makeText(this.ctx, "New Word:"+this.currentWord, Toast.LENGTH_LONG).show();	
     	}
 	}
 	
@@ -100,13 +107,13 @@ public abstract class Game {
 	 * new word is selected. It will also take care of losing and winning a game.
 	 * @param key_press The key that was pressed.
 	 */
-	public void onCorrectAnswer(char key_press) {  
-    	this.goodCharacters.add(key_press);	
-		ctx.setKeyboardKeyLabel(key_press, this.ctx.getString(R.string.keyboard_button_correct));	
+	public void onCorrectAnswer(final char key_press) {    
+       	Game.this.goodCharacters.add(key_press);	
+		ctx.setKeyboardKeyLabel(key_press, Game.this.ctx.getString(R.string.keyboard_button_correct));	
 		
-    	this.updateWordPattern(); 
-    	if(!this.wordPattern.contains("_")) {
-    		this.onWinGame();
+		Game.this.updateWordPattern(); 
+    	if(!Game.this.wordPattern.contains("_")) {
+    		Game.this.onWinGame();
     	}
     }
     
@@ -114,12 +121,12 @@ public abstract class Game {
      * This method is called whenever a user guessed a character that is not in the current word. 
      * It updates the attempts accordingly.
      */
-    public void onWrongAnswer(char key_press) {
-    	this.badCharacters.add(key_press);	
-		ctx.setKeyboardKeyLabel(key_press, this.ctx.getString(R.string.keyboard_button_incorrect));	
+    public void onWrongAnswer(final char key_press) {   
+     	Game.this.badCharacters.add(key_press);	
+		ctx.setKeyboardKeyLabel(key_press, Game.this.ctx.getString(R.string.keyboard_button_incorrect));	
 		
-    	this.currentAttempts++;
-    	this.updateAttempts();
+		Game.this.currentAttempts++;
+		Game.this.updateAttempts();
     }
     
     /**
@@ -149,7 +156,7 @@ public abstract class Game {
     public void updateWordPattern() {
         this.wordPattern = "";
         
-    	TextView word_view = (TextView) this.ctx.findViewById(R.id.word_view);
+    	final TextView word_view = (TextView) this.ctx.findViewById(R.id.word_view);
     	StringBuilder placeholder = new StringBuilder(" ");
     	for(int i = 0; i < this.currentWord.length(); i++) {
     		char c = this.currentWord.toCharArray()[i];
@@ -161,7 +168,16 @@ public abstract class Game {
 	    		this.wordPattern += "_";
     		}
     	}
-    	word_view.setText(placeholder);
+    	
+    	final StringBuilder tempPattern = placeholder;
+    	this.ctx.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+		    	word_view.setText(tempPattern);
+			}
+    		
+    	});
     }
     
     
@@ -169,47 +185,67 @@ public abstract class Game {
      * Updates the attempts that is shown on screen.
      */
     public void updateAttempts() {
-    	TextView attempts_view = (TextView) this.ctx.findViewById(R.id.attempts_view);
-    	attempts_view.setText("Attempts "+this.currentAttempts+"/"+GameHelper.instance.getMaxAttempts());    	  
+    	this.ctx.runOnUiThread(new Runnable() {
+
+			@Override
+			public void run() {
+			  	TextView attempts_view = (TextView) Game.this.ctx.findViewById(R.id.attempts_view);
+		    	attempts_view.setText("Attempts "+Game.this.currentAttempts+"/"+GameHelper.instance.getMaxAttempts());    
+			}
+    		
+    	});
     	
-    	if(this.currentAttempts == GameHelper.instance.getMaxAttempts()) {
-    		this.onLoseGame();
-    	}
+    	if(Game.this.currentAttempts >= GameHelper.instance.getMaxAttempts()) {
+    		Game.this.onLoseGame();
+    	}  
     }
     
-    public void endGamePopup(String title, boolean show_highscore) {
-    	AlertDialog.Builder alert = new AlertDialog.Builder(this.ctx);
+    /**
+     * Shows a popup to notify a user of a win or loss.
+     * @param title title for alert
+     * @param show_highscore show highscore or not?
+     */
+    public void endGamePopup(final String title, final boolean show_highscore) {
+    	this.ctx.runOnUiThread(new Runnable() {
 
-    	alert.setTitle(title);
+			@Override
+			public void run() {
+				AlertDialog.Builder alert = new AlertDialog.Builder(Game.this.ctx);
 
-    	alert.setCancelable(false);
-    	if(show_highscore) {
-    		alert.setMessage(this.ctx.getString(R.string.highscore_message));
+		    	alert.setTitle(title);
 
-	    	final EditText input = new EditText(this.ctx);
-	    	alert.setView(input);
-	    	
-	    	alert.setPositiveButton(this.ctx.getString(R.string.new_game_title), new DialogInterface.OnClickListener() {
-	    		public void onClick(DialogInterface dialog, int whichButton) {
-	    			String value = input.getText().toString();
-	    			System.out.println(value);
-	      			Game.this.ctx.onGameFinished();
-	    		}
-	    	});
-    	}
-    	else {
-    	  	alert.setPositiveButton(this.ctx.getString(R.string.new_game_title), new DialogInterface.OnClickListener() {
-	    		public void onClick(DialogInterface dialog, int whichButton) {
-	      			Game.this.ctx.onGameFinished();
-	    		}
-	    	});
-    	}
+		    	alert.setCancelable(false);
+		    	if(show_highscore) {
+		    		alert.setMessage(Game.this.ctx.getString(R.string.highscore_message));
+
+			    	final EditText input = new EditText(Game.this.ctx);
+			    	alert.setView(input);
+			    	
+			    	alert.setPositiveButton(Game.this.ctx.getString(R.string.new_game_title), new DialogInterface.OnClickListener() {
+			    		public void onClick(DialogInterface dialog, int whichButton) {
+			    			String value = input.getText().toString();
+			    			System.out.println(value);
+			      			Game.this.ctx.onGameFinished();
+			    		}
+			    	});
+		    	}
+		    	else {
+		    	  	alert.setPositiveButton(Game.this.ctx.getString(R.string.new_game_title), new DialogInterface.OnClickListener() {
+			    		public void onClick(DialogInterface dialog, int whichButton) {
+			      			Game.this.ctx.onGameFinished();
+			    		}
+			    	});
+		    	}
+		    	
+		    	alert.show();
+			}
+    		
+    	});
     	
-    	alert.show();
     }
     
     // Events    
-
+    
     /**
      * This method is called from the main activity when any valid key is pressed.
      * @param keyCode
@@ -218,20 +254,61 @@ public abstract class Game {
     	if(this.currentAttempts < GameHelper.instance.getMaxAttempts()) {
 	    	int begin = 'a';
 	    	int min_value = KeyEvent.KEYCODE_A;
-	    	char key_press = (char)(begin + (keyCode-min_value));
+	    	final char key_press = (char)(begin + (keyCode-min_value));
 	    	
 	    	if(keyCode >= 29 && keyCode <= 54) {
-		    	if(this.badCharacters.contains(key_press) || this.goodCharacters.contains(key_press)) {
-		        	//Toast.makeText(this, "You already guessed " + key_press + ".", Toast.LENGTH_LONG).show();
-		    	} else {
-		        	if(this.currentWord.contains(String.valueOf(key_press))) {      		
-		        		this.onCorrectAnswer(key_press);    
-		        	} else {
-		        		this.onWrongAnswer(key_press);        		
-		        	}
-		    	}
+	    		Runnable runnable = new Runnable() {
+
+					@Override
+					public void run() {
+				    	Game.this.ShowSpinner();
+				    	
+						if(Game.this.gamestate == GameState.NOT_STARTED) return; // game ended already, do nothing
+						
+				    	if(Game.this.badCharacters.contains(key_press) || Game.this.goodCharacters.contains(key_press)) {
+				        	//Toast.makeText(this, "You already guessed " + key_press + ".", Toast.LENGTH_LONG).show();
+				    	} else {
+				        	if(Game.this.currentWord.contains(String.valueOf(key_press))) {      		
+				        		Game.this.onCorrectAnswer(key_press);    
+				        	} else {
+				        		Game.this.onWrongAnswer(key_press);        		
+				        	}
+				    	}
+				    	
+				    	Game.this.HideSpinner();
+					}
+	    		};
+	    		executor.execute(runnable);
 	    	}
     	}
+    }
+    
+    /**
+     * Shows the spinner (ProgressBar)
+     */
+    private void ShowSpinner() {
+		Game.this.ctx.runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				View spinner = Game.this.ctx.findViewById(R.id.guessSpinner);
+				spinner.setVisibility(View.VISIBLE);				
+			}
+		});
+    }
+
+    /**
+     * Hides the spinner (ProgressBar)
+     */
+    private void HideSpinner() {
+		Game.this.ctx.runOnUiThread(new Runnable() {
+			
+			@Override
+			public void run() {
+				View spinner = Game.this.ctx.findViewById(R.id.guessSpinner);
+				spinner.setVisibility(View.INVISIBLE);				
+			}
+		});
     }
     
     // getters setters

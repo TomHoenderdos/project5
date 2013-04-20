@@ -7,13 +7,24 @@ import android.widget.Toast;
 
 public class EvilGame extends Game {
 
+	// When the game cannot be evil anymore this will stop attempting to be evil (to speed up guessing)
+	private boolean cannotBeEvilAnymore = false;
+	
 	public EvilGame(MainActivity ctx) {
 		super(ctx);
 	}
 	
 	/**
-	 * This method is called when a user presses a correct character. If evil is turned on it will make sure a
-	 * new word is selected. It will also take care of losing and winning a game.
+	 * An extra variable will be reset in evil mode.
+	 */
+	@Override
+	public void newGame() {
+		super.newGame();
+		this.cannotBeEvilAnymore = false;
+	}
+	
+	/**
+	 * Evil version of onCorrectAnswer
 	 * @param key_press The key that was pressed.
 	 */
 	@Override
@@ -23,19 +34,30 @@ public class EvilGame extends Game {
     	ArrayList<Character> tempList = this.getBadCharacters();
     	tempList.addAll(this.getGoodCharacters());
     	
-    	this.setCurrentWord(WordHelper.instance.getEvilWord(this.getCurrentWord(), this.getWordPattern(), tempList, key_press));
-    	if(this.getCurrentWord().equals(old_word)) {
-    	 	super.onCorrectAnswer(key_press);
+    	if(this.cannotBeEvilAnymore) {
+    		super.onCorrectAnswer(key_press);
     	}
-    	else {    	
-    		if(this.getCurrentWord().length() == 0) {  
-        	 	super.onCorrectAnswer(key_press);
-    		}
-    		else {  
-        	 	super.onWrongAnswer(key_press);
-    			Toast.makeText(this.getCtx(), "New word:" + this.getCurrentWord(), Toast.LENGTH_LONG).show();	
-    		}
-        	this.updateWordPattern(); 	
+    	else {
+	    	this.setCurrentWord(WordHelper.instance.getEvilWord(this.getCurrentWord(), this.getWordPattern(), tempList, key_press));
+	    	if(this.getCurrentWord().equals(old_word)) {
+	    		super.onCorrectAnswer(key_press);
+	    	}
+	    	else {    	
+	    		if(this.getCurrentWord().length() == 0) {  
+	    			super.onCorrectAnswer(key_press);
+	    			this.cannotBeEvilAnymore = true;
+	    		}
+	    		else {  
+	    			super.onWrongAnswer(key_press);
+	    			this.getCtx().runOnUiThread(new Runnable() {
+	
+						@Override
+						public void run() {
+			    			//Toast.makeText(EvilGame.this.getCtx(), "New word:" + EvilGame.this.getCurrentWord(), Toast.LENGTH_LONG).show();	
+						}    				
+	    			});
+	    		}
+	    	}
     	}
     }  
 }
