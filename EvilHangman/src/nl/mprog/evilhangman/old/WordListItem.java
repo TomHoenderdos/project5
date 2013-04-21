@@ -2,6 +2,11 @@ package nl.mprog.evilhangman.old;
 
 import java.util.ArrayList;
 
+@Deprecated
+/**
+ * @author Jeroen Grootendorst
+ * @deprecated Use WordHelper.java
+ */
 public class WordListItem extends ArrayList<String> {
 
 	private static final long serialVersionUID = 1L;

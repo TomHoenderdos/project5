@@ -1,13 +1,16 @@
 package nl.mprog.evilhangman.old;
 
-import java.util.Collections;
+
 import java.util.Random;
 
 import android.content.Context;
-import android.database.Cursor;
 import android.util.SparseArray;
-import android.widget.Toast;
 
+@Deprecated
+/**
+ * @author Jeroen Grootendorst
+ * @deprecated Use WordHelper.java
+ */
 public class WordList extends SparseArray<WordListItem>{
 	
 	private WordListItem current_word_list_model;
@@ -75,11 +78,11 @@ public class WordList extends SparseArray<WordListItem>{
 		}*/
 	}
 	
-	/*public String getRandomWord() {
+	public String getRandomWord() {
 		Random rand = new Random();
 		current_word_list_model = this.valueAt(rand.nextInt(this.size()));
 		return current_word_list_model.get(rand.nextInt(current_word_list_model.size()));
-	}*/
+	}
 
 	public WordListItem getCurrent_word_list_model() {
 		return current_word_list_model;
