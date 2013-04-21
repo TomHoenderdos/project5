@@ -88,7 +88,7 @@ public enum WordHelper {
 	 */
 	public String getEvilWord(String currentWord, String matchPattern, ArrayList<Character> usedCharacters, char pressedKey){
 		
-		long m1 = System.currentTimeMillis();
+//		long m1 = System.currentTimeMillis();
 	
 		// generate globbing part for non guessed characters
 		StringBuilder glob = new StringBuilder();
@@ -101,9 +101,9 @@ public enum WordHelper {
 		}
 		glob.append(']');
 
-		long m2 = System.currentTimeMillis();
-		System.out.println("getEvilWord glob:" + (m1-m2) + "ms");
-		m1 = System.currentTimeMillis();
+//		long m2 = System.currentTimeMillis();
+//		System.out.println("getEvilWord glob:" + (m1-m2) + "ms");
+//		m1 = System.currentTimeMillis();
 		
 		// generate the globbing part of every character
 		
@@ -121,9 +121,9 @@ public enum WordHelper {
 			large_glob.append(newGlob);
 		}
 		
-		m2 = System.currentTimeMillis();
-		System.out.println("getEvilWord largeglob:" + (m1-m2) + "ms");
-		m1 = System.currentTimeMillis();
+//		m2 = System.currentTimeMillis();
+//		System.out.println("getEvilWord largeglob:" + (m1-m2) + "ms");
+//		m1 = System.currentTimeMillis();
 		
 		// execute query
 		this.open();
@@ -149,8 +149,8 @@ public enum WordHelper {
 		cursor.close();
 		this.close();
 
-		m2 = System.currentTimeMillis();
-		System.out.println("getEvilWord query:" + (m1-m2) + "ms");
+//		m2 = System.currentTimeMillis();
+//		System.out.println("getEvilWord query:" + (m1-m2) + "ms");
 		return word == null ? currentWord : word.toLowerCase(Locale.getDefault());
 	}
 }
