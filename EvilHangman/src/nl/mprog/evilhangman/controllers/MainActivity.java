@@ -168,6 +168,9 @@ public class MainActivity extends Activity {
     	setContentView(R.layout.activity_main);
     }
 
+    
+    // getters
+    
 	public Game getMainGame() {
 		return mainGame;
 	}
