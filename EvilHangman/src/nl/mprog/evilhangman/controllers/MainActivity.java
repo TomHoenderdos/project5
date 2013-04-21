@@ -167,4 +167,13 @@ public class MainActivity extends Activity {
     public void cancelSettings(){
     	setContentView(R.layout.activity_main);
     }
+
+	public Game getMainGame() {
+		return mainGame;
+	}
+
+	public GestureDetector getGestureDetector() {
+		return gestureDetector;
+	}
+	
 }
