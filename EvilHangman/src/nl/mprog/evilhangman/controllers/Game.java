@@ -1,27 +1,27 @@
 package nl.mprog.evilhangman.controllers;
 
-
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import nl.mprog.evilhangman.R;
-import nl.mprog.evilhangman.R.id;
-import nl.mprog.evilhangman.R.string;
-import nl.mprog.evilhangman.helpers.GameHelper;
 import nl.mprog.evilhangman.helpers.WordHelper;
+import nl.mprog.evilhangman.models.GameSettings;
 
 import android.app.AlertDialog;
-import android.content.Context;
 import android.content.DialogInterface;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
-import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
+/**
+ * Game is an abstract class designed for the base features of a Hang Man game. It is possible to run 
+ * multiple games at once giving the fact you link it to other context. 
+ * @author Jeroen Grootendorst
+ *
+ */
 public abstract class Game {
 	private String currentWord = new String();
 	private String wordPattern = new String();
@@ -40,10 +40,10 @@ public abstract class Game {
 	
 	private GameState gamestate = GameState.NOT_STARTED;	
 	
-	private MainActivity ctx;
+	private final MainActivity ctx;	
 	
 	/**
-	 * Constructor of Game
+	 * Class constructor providing a context
 	 * @param ctx
 	 */
 	public Game(MainActivity ctx) {
@@ -89,7 +89,7 @@ public abstract class Game {
 	        // update ui
 	    	this.updateWordPattern();
 	    	this.updateAttempts();
-	    	ctx.resetKeyboard();
+	    	((GameKeyboardView)this.ctx.findViewById(R.id.keyboardView)).resetKeyboard();
 	    	
 	    	//Toast.makeText(this.ctx, "New Word:"+this.currentWord, Toast.LENGTH_LONG).show();	
     	}
@@ -109,7 +109,7 @@ public abstract class Game {
 	 */
 	public void onCorrectAnswer(final char key_press) {    
        	Game.this.goodCharacters.add(key_press);	
-		ctx.setKeyboardKeyLabel(key_press, Game.this.ctx.getString(R.string.keyboard_button_correct));	
+       	((GameKeyboardView)this.ctx.findViewById(R.id.keyboardView)).setKeyboardKeyLabel(key_press, Game.this.ctx.getString(R.string.keyboard_button_correct));	
 		
 		Game.this.updateWordPattern(); 
     	if(!Game.this.wordPattern.contains("_")) {
@@ -123,7 +123,7 @@ public abstract class Game {
      */
     public void onWrongAnswer(final char key_press) {   
      	Game.this.badCharacters.add(key_press);	
-		ctx.setKeyboardKeyLabel(key_press, Game.this.ctx.getString(R.string.keyboard_button_incorrect));	
+     	((GameKeyboardView)this.ctx.findViewById(R.id.keyboardView)).setKeyboardKeyLabel(key_press, Game.this.ctx.getString(R.string.keyboard_button_incorrect));	
 		
 		Game.this.currentAttempts++;
 		Game.this.updateAttempts();
@@ -190,12 +190,12 @@ public abstract class Game {
 			@Override
 			public void run() {
 			  	TextView attempts_view = (TextView) Game.this.ctx.findViewById(R.id.attempts_view);
-		    	attempts_view.setText("Attempts "+Game.this.currentAttempts+"/"+GameHelper.instance.getMaxAttempts());    
+		    	attempts_view.setText("Attempts "+Game.this.currentAttempts+"/"+GameSettings.instance.getMaxAttempts());    
 			}
     		
     	});
     	
-    	if(Game.this.currentAttempts >= GameHelper.instance.getMaxAttempts()) {
+    	if(Game.this.currentAttempts >= GameSettings.instance.getMaxAttempts()) {
     		Game.this.onLoseGame();
     	}  
     }
@@ -251,7 +251,7 @@ public abstract class Game {
      * @param keyCode
      */
     public void processKey(int keyCode) {   
-    	if(this.currentAttempts < GameHelper.instance.getMaxAttempts()) {
+    	if(this.currentAttempts < GameSettings.instance.getMaxAttempts()) {
 	    	int begin = 'a';
 	    	int min_value = KeyEvent.KEYCODE_A;
 	    	final char key_press = (char)(begin + (keyCode-min_value));
@@ -363,9 +363,5 @@ public abstract class Game {
 
 	public MainActivity getCtx() {
 		return ctx;
-	}
-
-	public void setCtx(MainActivity ctx) {
-		this.ctx = ctx;
-	}    
+	}  
 }

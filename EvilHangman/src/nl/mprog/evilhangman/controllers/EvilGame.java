@@ -3,13 +3,22 @@ package nl.mprog.evilhangman.controllers;
 import java.util.ArrayList;
 
 import nl.mprog.evilhangman.helpers.WordHelper;
-import android.widget.Toast;
 
+/**
+ * EvilGame is a class that extends the abstract class Game. When this type of game is run
+ * the program will try to fool an user in thinking they guessed the wrong answer as much as possible.
+ * @author Jeroen Grootendorst
+ *
+ */
 public class EvilGame extends Game {
 
 	// When the game cannot be evil anymore this will stop attempting to be evil (to speed up guessing)
 	private boolean cannotBeEvilAnymore = false;
 	
+	/**
+	 * Class constructor providing a context
+	 * @param ctx
+	 */
 	public EvilGame(MainActivity ctx) {
 		super(ctx);
 	}

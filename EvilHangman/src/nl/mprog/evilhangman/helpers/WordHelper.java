@@ -4,15 +4,16 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
-
 import nl.mprog.evilhangman.controllers.DatabaseHandler;
-
-
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
+/**
+ * WordHelper takes care of all queries on the database involved with getting words.
+ * @author Jeroen Grootendorst
+ *
+ */
 public enum WordHelper {
 	instance;
 	
@@ -82,11 +83,12 @@ public enum WordHelper {
 	 * @param currentWord the current word
 	 * @param matchPattern the pattern it has to match
 	 * @param usedCharacters used characters
+	 * @param pressedKey the character that was just pressed
 	 * @return
 	 */
 	public String getEvilWord(String currentWord, String matchPattern, ArrayList<Character> usedCharacters, char pressedKey){
 		
-//		long m1 = System.currentTimeMillis();
+		long m1 = System.currentTimeMillis();
 	
 		// generate globbing part for non guessed characters
 		StringBuilder glob = new StringBuilder();
@@ -99,9 +101,9 @@ public enum WordHelper {
 		}
 		glob.append(']');
 
-//		long m2 = System.currentTimeMillis();
-//		System.out.println("getEvilWord glob:" + (m1-m2) + "ms");
-//		m1 = System.currentTimeMillis();
+		long m2 = System.currentTimeMillis();
+		System.out.println("getEvilWord glob:" + (m1-m2) + "ms");
+		m1 = System.currentTimeMillis();
 		
 		// generate the globbing part of every character
 		
@@ -119,21 +121,21 @@ public enum WordHelper {
 			large_glob.append(newGlob);
 		}
 		
-//		m2 = System.currentTimeMillis();
-//		System.out.println("getEvilWord largeglob:" + (m1-m2) + "ms");
-//		m1 = System.currentTimeMillis();
+		m2 = System.currentTimeMillis();
+		System.out.println("getEvilWord largeglob:" + (m1-m2) + "ms");
+		m1 = System.currentTimeMillis();
 		
 		// execute query
 		this.open();
 
-		String selectQuery = "SELECT name, LENGTH(name) as nameLength " +
+		String selectQuery = "SELECT name " +
 		"FROM words " +
-		"WHERE nameLength == " + Integer.toString(currentWord.length()) + " " +
-		"AND name LIKE '" + matchPattern + "' " +
+		"WHERE len == " + Integer.toString(currentWord.length()) + " " +
 		"AND name GLOB '" + large_glob + "' " +
+		"AND name LIKE '" + matchPattern + "' " +
 		"GROUP BY rowid " +
-		"HAVING nameLength - LENGTH(REPLACE(name, 'E', '')) = " +
-			"(SELECT MIN(LENGTH(name) - LENGTH(REPLACE(name, 'E', ''))))" +
+		"HAVING len - LENGTH(REPLACE(name, 'E', '')) = " +
+			"(SELECT MIN(len - LENGTH(REPLACE(name, 'E', ''))))" +
 		"ORDER BY RANDOM() LIMIT 1";			
 
 		Cursor cursor = db.rawQuery(selectQuery, null);
@@ -147,8 +149,8 @@ public enum WordHelper {
 		cursor.close();
 		this.close();
 
-//		m2 = System.currentTimeMillis();
-//		System.out.println("getEvilWord query:" + (m1-m2) + "ms");
-		return word == null ? currentWord : word.toLowerCase();
+		m2 = System.currentTimeMillis();
+		System.out.println("getEvilWord query:" + (m1-m2) + "ms");
+		return word == null ? currentWord : word.toLowerCase(Locale.getDefault());
 	}
 }

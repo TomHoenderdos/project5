@@ -1,42 +1,31 @@
 package nl.mprog.evilhangman.controllers;
 
-
-import java.util.List;
-
 import nl.mprog.evilhangman.R;
-import nl.mprog.evilhangman.R.id;
-import nl.mprog.evilhangman.R.layout;
-import nl.mprog.evilhangman.R.menu;
 import nl.mprog.evilhangman.helpers.SettingsHelper;
 import nl.mprog.evilhangman.helpers.WordHelper;
 import nl.mprog.evilhangman.models.SettingsModel;
 
 import android.inputmethodservice.Keyboard;
-import android.inputmethodservice.Keyboard.Key;
-import android.inputmethodservice.KeyboardView;
-import android.inputmethodservice.KeyboardView.OnKeyboardActionListener;
 import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.Window;
-import android.widget.EditText;
 import android.widget.SeekBar;
 import android.widget.Switch;
-import android.widget.TextView;
-import android.widget.Toast;
 
-@SuppressLint({ "DefaultLocale", "NewApi", "ShowToast" })
-public class MainActivity extends Activity implements OnKeyboardActionListener{
+@SuppressLint("NewApi")
+public class MainActivity extends Activity {
 
 	// The game this is currently playing
 	private Game mainGame;	
+	private GestureDetector gestureDetector;
 	
 	/**
 	 * onCreate is called when the activity launches.
@@ -45,19 +34,27 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);      
         
-        this.requestWindowFeature(Window.FEATURE_NO_TITLE);  
-        setContentView(R.layout.activity_main);
+        this.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        this.setContentView(R.layout.activity_main);
         
-        KeyboardView keyboardView = (KeyboardView) findViewById(R.id.keyboardView);
+        // create the keyboard view
+        GameKeyboardView keyboardView = (GameKeyboardView) this.findViewById(R.id.keyboardView);
         Keyboard keyboard = new Keyboard(this, R.layout.custom_keyboard);
         keyboardView.setKeyboard(keyboard);
         keyboardView.setEnabled(true);
-        keyboardView.setPreviewEnabled(true);      
-        keyboardView.setOnKeyboardActionListener(this);
-
-        WordHelper.instance.initialize(this);
+        keyboardView.setPreviewEnabled(true);  
         
-        mainGame = new EvilGame(this);
+        // initialize wordhelpe
+        WordHelper.instance.initialize(this);  
+        
+        // create the a game
+        this.mainGame = new EvilGame(this);
+        
+        // ensure this line is below creating a game
+        keyboardView.setOnKeyboardActionListener(new GameKeyboardListener(this.mainGame));
+
+        // create a gesture detector for swiping down and up
+        this.gestureDetector = new GestureDetector(this, new GameGestureDetectorListener(this));
         
 //        DatabaseHandler db = new DatabaseHandler(this);
 //        String[] s = db.getWords();
@@ -93,44 +90,18 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
         mainGame = new EvilGame(this);
     }
     
-    /**
-     * Changes a visual keyboard key label with a string.
-     * @param key_press
-     * @param label
-     */
-    public void setKeyboardKeyLabel(final int key_press, final String label) {
-    	this.runOnUiThread(new Runnable() {
-
-			@Override
-			public void run() {
-		        KeyboardView keyboardView = (KeyboardView) findViewById(R.id.keyboardView);
-		        Keyboard keyboard = keyboardView.getKeyboard();
-		        List<Key> keys = keyboard.getKeys();
-		        for(Key key : keys) {
-		        	if(key.label.toString().toLowerCase().charAt(0) == key_press) {
-		        		key.label = label;
-		        		keyboardView.invalidateKey(keys.indexOf(key));
-		        	}
-		        }
-			}    		
-    	});
-    }
-
-    /**
-     * Returns the visual keyboard to default
-     */
-    public void resetKeyboard() {
-    	this.runOnUiThread(new Runnable() {
-
-			@Override
-			public void run() {
-		        KeyboardView keyboardView = (KeyboardView) findViewById(R.id.keyboardView);
-		        Keyboard keyboard = new Keyboard(MainActivity.this, R.layout.custom_keyboard);
-		        keyboardView.setKeyboard(keyboard);    	
-			}    		
-    	});
+    @Override
+	public boolean onKeyDown(int keyCode, KeyEvent event) {
+		this.mainGame.processKey(keyCode);    	
+    	return super.onKeyDown(keyCode, event);
     }
     
+    public boolean onTouchEvent(MotionEvent me) {
+    	this.gestureDetector.onTouchEvent(me);
+    	return super.onTouchEvent(me);
+	}
+    
+       
     /**
      * The context menu is created here.
      */
@@ -166,7 +137,7 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
      * Shows the settings for the game
      */
     public void showSettings(){
-    	Intent intent = new Intent(getBaseContext(), Preferences.class);
+    	this.startActivity(new Intent(getBaseContext(), Preferences.class));
 //    	intent.
     }
     
@@ -196,48 +167,4 @@ public class MainActivity extends Activity implements OnKeyboardActionListener{
     public void cancelSettings(){
     	setContentView(R.layout.activity_main);
     }
-    
-    @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-    	this.mainGame.processKey(keyCode);    	
-    	return super.onKeyDown(keyCode, event);
-    }
-    public void onKey(int primaryCode, int[] keyCodes) {
-    	this.mainGame.processKey(primaryCode);
-    }
-    
-	@Override
-	public void onPress(int arg0) {
-		// TODO Auto-generated method stub		
-	}
-
-	@Override
-	public void onRelease(int arg0) {
-		// TODO Auto-generated method stub		
-	}
-
-	@Override
-	public void onText(CharSequence arg0) {
-		// TODO Auto-generated method stub		
-	}
-
-	@Override
-	public void swipeDown() {
-		// TODO Auto-generated method stub		
-	}
-
-	@Override
-	public void swipeLeft() {
-		// TODO Auto-generated method stub		
-	}
-
-	@Override
-	public void swipeRight() {
-		// TODO Auto-generated method stub		
-	}
-
-	@Override
-	public void swipeUp() {
-		// TODO Auto-generated method stub		
-	}
 }

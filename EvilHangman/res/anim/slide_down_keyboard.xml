@@ -1,0 +1,12 @@
+<set android:shareInterpolator="false"
+    android:fillEnabled="true"
+    android:fillAfter="true"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <translate
+        android:interpolator="@android:anim/decelerate_interpolator"
+        android:fromYDelta="0%"
+        android:toYDelta="100%"
+        android:duration="1000">
+        
+    </translate>
+</set>
