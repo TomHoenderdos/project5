@@ -3,7 +3,7 @@
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:example="http://schemas.android.com/apk/res/nl.mprog.evilhangman">
     
-    <nl.mprog.evilhangman.SeekbarPreference
+    <nl.mprog.evilhangman.controllers.SeekbarPreference
     android:key="sbp_WordCount"
 	android:title="@string/word_count_title"
 	android:dialogTitle="@string/word_count_title"
@@ -13,14 +13,20 @@
 	example:minValue="2"
 	example:maxValue="26" />
     
-    <nl.mprog.evilhangman.SeekbarPreference
+    <nl.mprog.evilhangman.controllers.SeekbarPreference
     android:key="sbp_MaxAttempts"
 	android:title="@string/max_attempts"
 	android:dialogTitle="@string/max_attempts"
 	android:summary="@string/max_attempts_summ"
 	android:persistent="true"
-	android:defaultValue="10"
+	android:defaultValue="8"
 	example:minValue="2"
 	example:maxValue="26" />
+    
+     <CheckBoxPreference
+            android:defaultValue="false"
+            android:key="Evil"
+            android:summary="Check this box to play the game in Evil mode"
+            android:title="Evil Mode" />
     
 </PreferenceScreen>

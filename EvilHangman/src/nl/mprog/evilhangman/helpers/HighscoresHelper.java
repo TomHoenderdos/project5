@@ -13,8 +13,9 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public class HighscoresHelper {
-
+public enum HighscoresHelper {
+	instance;
+	
 	private DatabaseHandler dbhandler = null;
 	private SQLiteDatabase db = null;
    // Table names
@@ -24,8 +25,8 @@ public class HighscoresHelper {
     private static final String KEY_NAME = "name";
     private static final String KEY_SCORE = "score";
 	
-	public HighscoresHelper(Context context) {
-		dbhandler = new DatabaseHandler(context.getApplicationContext());
+    public void initialize(Context ctx) {
+		dbhandler = new DatabaseHandler(ctx.getApplicationContext());
 		try {
 			dbhandler.createDataBase();
 		} catch (IOException e) {
@@ -45,7 +46,7 @@ public class HighscoresHelper {
 	
 	 //Adding new Highscore
     public void addHighscore(Highscore highscore){
-    	open();
+    	this.open();
 
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, highscore.getName());
@@ -53,12 +54,12 @@ public class HighscoresHelper {
 
         // Inserting Row
         db.insert(TABLE_HIGHSCORES, null, values);
-        close(); // Closing database connection
+        this.close(); // Closing database connection
     }
 
     // Get all highscores
     public List<Highscore> getHighscores(){
-    	open();
+    	this.open();
     	List<Highscore> highscoreList = new ArrayList<Highscore>();
 
         // Select All from table highscore
@@ -75,7 +76,7 @@ public class HighscoresHelper {
                 highscoreList.add(highscore);
     		} while (cursor.moveToNext());
     	}
-    	close(); // Closing database connection
+    	this.close(); // Closing database connection
     	return highscoreList;
     }
 	

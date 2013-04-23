@@ -75,7 +75,6 @@ public enum WordHelper {
 		cursor.close();
 		this.close();
 		return word;
-		//return "MAGNETRON";
 	}
 	
 	/**

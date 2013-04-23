@@ -10,7 +10,8 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 
-public class SettingsHelper {
+public enum SettingsHelper {
+	instance;
 	
 	private DatabaseHandler dbhandler = null;
 	private SQLiteDatabase db = null;
@@ -23,9 +24,9 @@ public class SettingsHelper {
     private static final String KEY_MAX_AT = "maxattempts";
     private static final String KEY_WC = "wordcount";
     
-    public SettingsHelper(Context context){
+    public void initialize(Context ctx) {
     	
-    	dbhandler = new DatabaseHandler(context.getApplicationContext());
+    	dbhandler = new DatabaseHandler(ctx.getApplicationContext());
     	try {
 			dbhandler.createDataBase();
 		} catch (IOException e) {
@@ -34,49 +35,52 @@ public class SettingsHelper {
 		}
     }
     
-	public void open(){
+	private void open(){
 		dbhandler.openDataBase();
 		db = dbhandler.getReadableDatabase();
 	}
 	
-	public void close() {
+	private void close() {
 		dbhandler.close();
 	}
     
  // Get settings
     public SettingsModel getSettings(){
-    	open();
+    	this.open();
     	
     	// Select all from table settings
-        String selectQuery = "SELECT  * FROM " + TABLE_SETTINGS;
+        String selectQuery = "SELECT * FROM " + TABLE_SETTINGS;
 
     	Cursor cursor = db.rawQuery(selectQuery, null);
     	SettingsModel setting = new SettingsModel();
     	
     	//Loop through the rows and add to the settings list
-    	if(cursor.moveToFirst()){
-            setting.setEvil(Boolean.parseBoolean(cursor.getString(0))); //Evil
-    		setting.setMaxAttempts(Integer.parseInt(cursor.getString(1))); //Max Attempts
-    		setting.setWordCount(Integer.parseInt(cursor.getString(2))); //Wordcount
-    	} while (cursor.moveToNext());
+    	cursor.moveToFirst();
+    	if(cursor.getCount() > 0){
+    		setting.setEvil(Boolean.parseBoolean(cursor.getString(0))); //Evil
+        	setting.setMaxAttempts(Integer.parseInt(cursor.getString(1))); //Max Attempts
+        	setting.setWordCount(Integer.parseInt(cursor.getString(2))); //Wordcount
+    	}
 
         // return list of settings
-    	close();
+    	cursor.close();
+    	this.close();
         return setting;
 
     }
 
     // Save settings
     public void saveSettings(SettingsModel settingsModel){
-    	open();
+    	this.open();
     	 ContentValues values = new ContentValues();
     	 values.put(KEY_EVIL, settingsModel.getEvil());
     	 values.put(KEY_MAX_AT, settingsModel.getMaxAttempts());
     	 values.put(KEY_WC, settingsModel.getWordCount());
     	 
 
+    	 
     	// Inserting Row
         db.insert(TABLE_SETTINGS, null, values);
-        close();
+        this.close();
     }
 }

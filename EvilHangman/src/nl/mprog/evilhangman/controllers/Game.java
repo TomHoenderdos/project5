@@ -6,11 +6,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import nl.mprog.evilhangman.R;
+import nl.mprog.evilhangman.helpers.SettingsHelper;
 import nl.mprog.evilhangman.helpers.WordHelper;
-import nl.mprog.evilhangman.models.GameSettings;
+import nl.mprog.evilhangman.models.SettingsModel;
 
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.preference.PreferenceManager;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -32,6 +35,7 @@ public abstract class Game {
     private final ExecutorService executor = Executors.newSingleThreadExecutor();
 	
 	private int currentAttempts;
+	private int maxAttempts;
 
 	enum GameState {
 		NOT_STARTED,
@@ -58,6 +62,34 @@ public abstract class Game {
 	 */
 	public void newGame() {
 		
+		//Get settings and save them in SQLite DB
+		
+		 SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx.getBaseContext());
+	     
+		 SettingsModel settingsModel = SettingsHelper.instance.getSettings();
+		 	System.out.println("Evil: " + prefs.getBoolean("Evil", false));
+		 	System.out.println("MaxAttempts: " + prefs.getInt("sbp_MaxAttempts", 8));
+		 	System.out.println("WordCount" + prefs.getInt("sbp_WordCount", 4));
+		 	
+		 	
+	     	settingsModel.setEvil(prefs.getBoolean("Evil", false));
+	     	settingsModel.setMaxAttempts(prefs.getInt("sbp_MaxAttempts", 8));
+	     	settingsModel.setWordCount(prefs.getInt("sbp_WordCount", 4));
+	     	
+	     	System.out.println(settingsModel.getEvil());
+	     	System.out.println(settingsModel.getMaxAttempts());
+	     	System.out.println(settingsModel.getWordCount());
+	     	
+	     	
+	     	
+	     SettingsHelper.instance.saveSettings(settingsModel);
+	     
+	     System.out.println("Evil SQL: " +   SettingsHelper.instance.getSettings().getEvil());
+		 System.out.println("MaxAttempts SQL: " + SettingsHelper.instance.getSettings().getMaxAttempts());
+		 System.out.println("WordCount SQL" + SettingsHelper.instance.getSettings().getWordCount());
+	     // Saved in SQLite   
+		
+		
     	if(this.gamestate == GameState.STARTED) {
     		
     		// already started? notify user
@@ -80,6 +112,7 @@ public abstract class Game {
     	} else if(this.gamestate == GameState.NOT_STARTED) {
     		
     		// reset variable
+    		this.maxAttempts = SettingsHelper.instance.getSettings().getMaxAttempts();
 	    	this.currentAttempts = 0; // reset attempts
 	        this.newWord(); // choose new word
 	        this.badCharacters.clear(); // clear bad characters
@@ -190,12 +223,12 @@ public abstract class Game {
 			@Override
 			public void run() {
 			  	TextView attempts_view = (TextView) Game.this.ctx.findViewById(R.id.attempts_view);
-		    	attempts_view.setText("Attempts "+Game.this.currentAttempts+"/"+GameSettings.instance.getMaxAttempts());    
+		    	attempts_view.setText("Attempts "+Game.this.currentAttempts+"/"+maxAttempts);    
 			}
     		
     	});
     	
-    	if(Game.this.currentAttempts >= GameSettings.instance.getMaxAttempts()) {
+    	if(Game.this.currentAttempts >= maxAttempts) {
     		Game.this.onLoseGame();
     	}  
     }
@@ -251,7 +284,7 @@ public abstract class Game {
      * @param keyCode
      */
     public void processKey(int keyCode) {   
-    	if(this.currentAttempts < GameSettings.instance.getMaxAttempts()) {
+    	if(this.currentAttempts < SettingsHelper.instance.getSettings().getMaxAttempts()) {
 	    	int begin = 'a';
 	    	int min_value = KeyEvent.KEYCODE_A;
 	    	final char key_press = (char)(begin + (keyCode-min_value));
