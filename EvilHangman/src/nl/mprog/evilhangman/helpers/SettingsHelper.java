@@ -24,6 +24,8 @@ public enum SettingsHelper {
     private static final String KEY_MAX_AT = "maxattempts";
     private static final String KEY_WC = "wordcount";
     
+    private int count = 0;
+    
     public void initialize(Context ctx) {
     	
     	dbhandler = new DatabaseHandler(ctx.getApplicationContext());
@@ -76,11 +78,16 @@ public enum SettingsHelper {
     	 values.put(KEY_EVIL, settingsModel.getEvil());
     	 values.put(KEY_MAX_AT, settingsModel.getMaxAttempts());
     	 values.put(KEY_WC, settingsModel.getWordCount());
-    	 
-
-    	 
+    	  
+    	 if (count == 0) {
+    		 db.insert(TABLE_SETTINGS, null, values);
+    	 } else {
+    		 db.update(TABLE_SETTINGS, values, null, null);
+    	 }
+    	 count++;
     	// Inserting Row
-        db.insert(TABLE_SETTINGS, null, values);
+    	 
+        
         this.close();
     }
 }

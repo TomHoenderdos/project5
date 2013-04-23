@@ -64,7 +64,12 @@ public class MainActivity extends Activity {
 	 * Callback called by a game
 	 */
 	public void onGameFinished() {
-		mainGame = new EvilGame(this);
+		if (SettingsHelper.instance.getSettings().getEvil()){
+			mainGame = new EvilGame(this);
+		} else {
+			mainGame = new NormalGame(this);
+		}
+		
 	}
 
 	@Override
