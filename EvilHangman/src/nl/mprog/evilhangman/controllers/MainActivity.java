@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -51,7 +52,7 @@ public class MainActivity extends Activity {
 //		HighscoresHelper.instance.initialize(this);
 
 		// create the a game
-		this.mainGame = new EvilGame(this);
+		onGameFinished();
 
 		// ensure this line is below creating a game
 		keyboardView.setOnKeyboardActionListener(new GameKeyboardListener(this.mainGame));
@@ -65,11 +66,12 @@ public class MainActivity extends Activity {
 	 */
 	public void onGameFinished() {
 		if (SettingsHelper.instance.getSettings().getEvil()){
+			Log.w("Game Mode", "Evil");
 			mainGame = new EvilGame(this);
 		} else {
+			Log.w("Game Mode", "Normal");
 			mainGame = new NormalGame(this);
-		}
-		
+		}	
 	}
 
 	@Override

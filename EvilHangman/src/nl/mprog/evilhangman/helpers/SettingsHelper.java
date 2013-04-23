@@ -9,6 +9,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 
 public enum SettingsHelper {
 	instance;
@@ -59,7 +60,10 @@ public enum SettingsHelper {
     	//Loop through the rows and add to the settings list
     	cursor.moveToFirst();
     	if(cursor.getCount() > 0){
-    		setting.setEvil(Boolean.parseBoolean(cursor.getString(0))); //Evil
+    		Log.w("SQL EVIL: ", cursor.getString(0));
+    		Log.w("SQL BOOL EVIL: ", ""+(Integer.parseInt(cursor.getString(0)) != 0));
+    		
+    		setting.setEvil(Integer.parseInt(cursor.getString(0)) != 0); //Evil
         	setting.setMaxAttempts(Integer.parseInt(cursor.getString(1))); //Max Attempts
         	setting.setWordCount(Integer.parseInt(cursor.getString(2))); //Wordcount
     	}
