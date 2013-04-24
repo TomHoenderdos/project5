@@ -3,9 +3,9 @@ package nl.mprog.evilhangman.models;
 public class SettingsModel {
 
 	//	Private vars
-	private Boolean Evil;
-	private Integer MaxAttempts;
-	private Integer WordCount;
+	private boolean evilSetting;
+	private int maxAttemptsSetting;
+	private int wordCountSetting;
 	
 	//Empty Constructor
 	public SettingsModel(){
@@ -13,35 +13,35 @@ public class SettingsModel {
 	}
 	
 	// Constructor
-	public SettingsModel(Boolean evil, Integer maxAttempts, Integer wordCount) {
+	public SettingsModel(boolean evil, int maxAttempts, int wordCount) {
 		super();
-		Evil = evil;
-		MaxAttempts = maxAttempts;
-		WordCount = wordCount;
+		evilSetting = evil;
+		maxAttemptsSetting = maxAttempts;
+		wordCountSetting = wordCount;
 	}
 
 	//	Get/Set Evil
-	public Boolean getEvil() {
-		return Evil;
+	public boolean getEvil() {
+		return evilSetting;
 	}
-	public void setEvil(Boolean evil) {
-		Evil = evil;
+	public void setEvil(boolean evil) {
+		evilSetting = evil;
 	}
 
 	//	Get/Set MaxAttempts
-	public Integer getMaxAttempts() {
-		return MaxAttempts;
+	public int getMaxAttempts() {
+		return maxAttemptsSetting;
 	}
-	public void setMaxAttempts(Integer maxAttempts) {
-		MaxAttempts = maxAttempts;
+	public void setMaxAttempts(int maxAttempts) {
+		maxAttemptsSetting = maxAttempts;
 	}
 
 	// Get/Set WordCount
-	public Integer getWordCount() {
-		return WordCount;
+	public int getWordCount() {
+		return wordCountSetting;
 	}
 
-	public void setWordCount(Integer wordCount) {
-		WordCount = wordCount;
+	public void setWordCount(int wordCount) {
+		wordCountSetting = wordCount;
 	}
 }

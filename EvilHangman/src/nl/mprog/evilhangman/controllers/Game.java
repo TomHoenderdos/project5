@@ -247,7 +247,7 @@ public abstract class Game {
 							String value = input.getText().toString();
 							int score = 0;
 
-							Log.w("Highscore Evil?", ""+SettingsHelper.instance.getSettings().getEvil());
+//							Log.w("Highscore Evil?", ""+SettingsHelper.instance.getSettings().getEvil());
 							if (SettingsHelper.instance.getSettings().getEvil()){
 								score = ((Game.this.wordCount * 1000) / Game.this.currentAttempts ) * 2;
 							} else {
@@ -260,11 +260,11 @@ public abstract class Game {
 							highScore.setWord(Game.this.currentWord);
 							highScore.save();
 							
-							Log.w("Game.this.wordCount", ""+Game.this.wordCount);
-							Log.w("Game.this.currentAttempts", ""+Game.this.currentAttempts);
-							Log.w("Name", value);
-							Log.w("Score", ""+score);
-							Log.w("Word", Game.this.currentWord);
+//							Log.w("Game.this.wordCount", ""+Game.this.wordCount);
+//							Log.w("Game.this.currentAttempts", ""+Game.this.currentAttempts);
+//							Log.w("Name", value);
+//							Log.w("Score", ""+score);
+//							Log.w("Word", Game.this.currentWord);
 
 							Game.this.ctx.onGameFinished();
 						}

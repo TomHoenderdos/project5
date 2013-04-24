@@ -54,14 +54,17 @@ public class HighscoreActivity extends Activity {
 				@Override
 				public int compare(Highscore lhs, Highscore rhs) {
 					// TODO Auto-generated method stub
-					return lhs.getScore().compareTo(rhs.getScore());
+//					return lhs.getScore().compareTo(rhs.getScore());
+					return (rhs.getScore() < lhs.getScore() ) ? -1: (rhs.getScore() > lhs.getScore()) ? 1:0; 
 				}
 			});
 			
 			TextView highScoresView = null;        
 			
 			for(int i=0; i<AllHighscores.size(); i++){
-				Log.w("HighscoreID", "i="+i+", "+AllHighscores.get(i).getName());
+//				Log.w("HighscoreID", "i="+i+", "+AllHighscores.get(i));
+//				Log.w("HighscoreID", "i="+i+", "+AllHighscores.get(i).getWord());
+//				Log.w("HighscoreID", "i="+i+", "+AllHighscores.get(i).getScore());
 				highScoresView = new TextView(this);
 				highScoresView.setText("Name: "+ AllHighscores.get(i).getName()+", Score: "+AllHighscores.get(i).getScore()+", Word: "+AllHighscores.get(i).getWord());
 //				tv.setText("Name: "+ AllHighscores.get(i).getName()+", Score: "+AllHighscores.get(i).getScore()+", Word: "+AllHighscores.get(i).getWord());

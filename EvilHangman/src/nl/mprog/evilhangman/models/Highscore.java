@@ -13,9 +13,9 @@ import nl.mprog.evilhangman.controllers.DatabaseHandler;
 
 public class Highscore {
 	//	private vars
-	private static String highscoreName;
-	private static int highscoreScore;
-	private static String highscoreWord;
+	private String highscoreName;
+	private int highscoreScore;
+	private String highscoreWord;
 
 	// Database vars
 	private DatabaseHandler dbhandler = null;
@@ -38,7 +38,7 @@ public class Highscore {
     
 	// Highscore with Database connection Constructor
 	public Highscore(Context ctx){
-		Log.w("Constructor Highscore", ""+ctx);
+//		Log.w("Constructor Highscore", ""+ctx);
 		this.myContext = ctx;
 		dbhandler = new DatabaseHandler(ctx.getApplicationContext());
 		try {
@@ -95,9 +95,9 @@ public class Highscore {
 	public void save(){
 		this.open();
 		
-		Log.w("Name", this.getName());
-		Log.w("Score", ""+this.getScore());
-		Log.w("Word", this.getWord());
+//		Log.w("Name", this.getName());
+//		Log.w("Score", ""+this.getScore());
+//		Log.w("Word", this.getWord());
 		
 		
 		ContentValues values = new ContentValues();
@@ -129,16 +129,18 @@ public class Highscore {
 			
 			while (cursor.moveToNext()){
 				Highscore highscore = new Highscore();
-				Log.w("SQL NAME", cursor.getString(0));
-				Log.w("SQL SCORE", cursor.getString(1));
-				Log.w("SQL WORD", cursor.getString(2));
+				
+//				Log.w("SQL NAME", cursor.getString(0));
+//				Log.w("SQL SCORE", cursor.getString(1));
+//				Log.w("SQL WORD", cursor.getString(2));
 			   	
-				highscore.setName(cursor.getString(0)); //Name
+				highscore.setName(cursor.getString(0).replace("\n", "").replace("\r", "")); //Name
 				highscore.setScore(Integer.parseInt(cursor.getString(1))); //Score
 				highscore.setWord(cursor.getString(2)); //Word
 			    
 				highscoreList.add(highscore);
-				Log.w("HighscoreList", ""+highscoreList.toString());
+				highscore = null;
+//				Log.w("HighscoreList(0)", ""+highscoreList.get(0).getName());
 			}
 //		} catch (Exception e) {
 //			// TODO Auto-generated catch block		

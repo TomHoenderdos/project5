@@ -79,7 +79,7 @@ public enum SettingsHelper {
 		values.put(KEY_MAX_AT, settingsModel.getMaxAttempts());
 		values.put(KEY_WC, settingsModel.getWordCount());
 
-		if (this.getSettings().getEvil() == null){
+		if (Boolean.toString(this.getSettings().getEvil()) == null){
 			this.open();
 			db.insert(TABLE_SETTINGS, null, values);
 			this.close();
