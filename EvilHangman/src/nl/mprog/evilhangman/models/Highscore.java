@@ -1,23 +1,27 @@
 package nl.mprog.evilhangman.models;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.util.Log;
 import nl.mprog.evilhangman.controllers.DatabaseHandler;
 
 
 public class Highscore {
 	//	private vars
-	private String name;
-	private Integer score;
-	private String word;
+	private static String highscoreName;
+	private static int highscoreScore;
+	private static String highscoreWord;
 
 	// Database vars
 	private DatabaseHandler dbhandler = null;
 	private SQLiteDatabase db = null;
+	
+	private Context myContext = null;
 	
 	// Table name
     private static final String TABLE_HIGHSCORES = "highscores";
@@ -27,86 +31,126 @@ public class Highscore {
     private static final String KEY_SCORE = "score";
     private static final String KEY_WORD = "word";
 
-	// Empty Constructor
-	public Highscore(){
-
+//    Empty constructor
+    public Highscore(){
+    	
+    }
+    
+	// Highscore with Database connection Constructor
+	public Highscore(Context ctx){
+		Log.w("Constructor Highscore", ""+ctx);
+		this.myContext = ctx;
+		dbhandler = new DatabaseHandler(ctx.getApplicationContext());
+		try {
+			dbhandler.createDataBase();
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 	}
 
-	//	Constructor
+	//	Model Constructor
 	public Highscore(String name, Integer score, String word) {
 		super();
-		this.name = name;
-		this.score = score;
-		this.word = word;
+		highscoreName = name;
+		highscoreScore = score;
+		highscoreWord = word;
 	}
 
 	//	Get/Set Name
 	public String getName() {
-		return this.name;
+		return highscoreName;
 	}
 	public void setName(String name) {
-		this.name = name;
+		highscoreName = name;
 	}
 
 	//	Get/Set Score
 	public Integer getScore() {
-		return this.score;
+		return highscoreScore;
 	}
 	public void setScore(Integer score) {
-		this.score = score;
+		highscoreScore = score;
 	}
 
 	//	Get/Set Word
 	public String getWord() {
-		return this.word;
+		return highscoreWord;
 	}
 	public void setWord(String word) {
-		this.word = word;
+		highscoreWord = word;
 	}
 
-	private void openConnection(){
+	private void open(){
 		dbhandler.openDataBase();
 		db = dbhandler.getReadableDatabase();
 	}
 
-	private void closeConnection(){
-		db = null;
+	private void close() {
 		dbhandler.close();
+		db = null;
 	}
 
 	public void save(){
-		this.openConnection();
-
+		this.open();
+		
+		Log.w("Name", this.getName());
+		Log.w("Score", ""+this.getScore());
+		Log.w("Word", this.getWord());
+		
+		
 		ContentValues values = new ContentValues();
-    	values.put(KEY_NAME, getName());
-    	values.put(KEY_SCORE, getScore());
-    	values.put(KEY_WORD, getWord());
+    	values.put(KEY_NAME, this.getName());
+    	values.put(KEY_SCORE, this.getScore());
+    	values.put(KEY_WORD, this.getWord());
 
     	// Inserting Row
         db.insert(TABLE_HIGHSCORES, null, values);
-        this.closeConnection(); // Closing database connection
+        this.close(); // Closing database connection
 	}
 
 	public List<Highscore> getHighscores(){
-		this.openConnection();
+		this.open();
 
 		List<Highscore> highscoreList = new ArrayList<Highscore>();
 
 		// Select All from table highscore
-        String selectQuery = "SELECT  * FROM " + TABLE_HIGHSCORES;
+        String selectQuery = "SELECT * FROM " + TABLE_HIGHSCORES;
 
     	Cursor cursor = db.rawQuery(selectQuery, null);
 
     	// Loop through all rows and add to the List
+//    	try {
     	cursor.moveToFirst();
-    	while (cursor.moveToNext()){
-    		Highscore highscore = new Highscore();
-           	highscore.setName(cursor.getString(0)); //Name
-    		highscore.setScore(Integer.parseInt(cursor.getString(1))); //Score
-    		highscore.setWord(cursor.getString(2)); //Word
-            highscoreList.add(highscore);
-    	}
-    	this.closeConnection(); // Closing database connection
+//			Log.w("SQL NAME", cursor.getString(0));
+//			Log.w("SQL SCORE", cursor.getString(1));
+//			Log.w("SQL WORD", cursor.getString(2));
+			
+			while (cursor.moveToNext()){
+				Highscore highscore = new Highscore();
+				Log.w("SQL NAME", cursor.getString(0));
+				Log.w("SQL SCORE", cursor.getString(1));
+				Log.w("SQL WORD", cursor.getString(2));
+			   	
+				highscore.setName(cursor.getString(0)); //Name
+				highscore.setScore(Integer.parseInt(cursor.getString(1))); //Score
+				highscore.setWord(cursor.getString(2)); //Word
+			    
+				highscoreList.add(highscore);
+				Log.w("HighscoreList", ""+highscoreList.toString());
+			}
+//		} catch (Exception e) {
+//			// TODO Auto-generated catch block		
+//			Log.w("Name", Highscore.getName());
+//			Log.w("Score", ""+Highscore.getScore());
+//			Log.w("Word", Highscore.getWord());
+//			
+//			e.printStackTrace();
+//			return highscoreList;
+//			
+//		}
+    	this.close(); // Closing database connection
 
     	return highscoreList;
 	}

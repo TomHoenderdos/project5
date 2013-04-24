@@ -15,6 +15,7 @@ import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.widget.EditText;
@@ -38,7 +39,7 @@ public abstract class Game {
 	private int currentAttempts;
 	private int maxAttempts;
 	private int wordCount;
-	
+
 	enum GameState {
 		NOT_STARTED,
 		STARTED
@@ -71,10 +72,10 @@ public abstract class Game {
 		settingsModel.setEvil(prefs.getBoolean("Evil", false));
 		settingsModel.setMaxAttempts(prefs.getInt("sbp_MaxAttempts", 8));
 		settingsModel.setWordCount(prefs.getInt("sbp_WordCount", 4));
-
 		SettingsHelper.instance.saveSettings(settingsModel);
-		// Saved in SQLite   
 
+		SettingsModel settings = SettingsHelper.instance.getSettings();
+		// Saved in SQLite   
 
 		if(this.gamestate == GameState.STARTED) {
 
@@ -98,8 +99,8 @@ public abstract class Game {
 		} else if(this.gamestate == GameState.NOT_STARTED) {
 
 			// reset variable
-			this.wordCount = SettingsHelper.instance.getSettings().getWordCount();
-			this.maxAttempts = SettingsHelper.instance.getSettings().getMaxAttempts();
+			this.wordCount = settings.getWordCount();
+			this.maxAttempts = settings.getMaxAttempts();
 			this.currentAttempts = 0; // reset attempts
 			this.newWord(); // choose new word
 			this.badCharacters.clear(); // clear bad characters
@@ -245,20 +246,26 @@ public abstract class Game {
 						public void onClick(DialogInterface dialog, int whichButton) {
 							String value = input.getText().toString();
 							int score = 0;
-							
+
+							Log.w("Highscore Evil?", ""+SettingsHelper.instance.getSettings().getEvil());
 							if (SettingsHelper.instance.getSettings().getEvil()){
 								score = ((Game.this.wordCount * 1000) / Game.this.currentAttempts ) * 2;
 							} else {
 								score = (Game.this.wordCount * 1000) / Game.this.currentAttempts;
 							}
 
-							Highscore highScore = new Highscore();
+							Highscore highScore = new Highscore(ctx.getBaseContext());
 							highScore.setName(value);
 							highScore.setScore(score);
 							highScore.setWord(Game.this.currentWord);
 							highScore.save();
 							
-							
+							Log.w("Game.this.wordCount", ""+Game.this.wordCount);
+							Log.w("Game.this.currentAttempts", ""+Game.this.currentAttempts);
+							Log.w("Name", value);
+							Log.w("Score", ""+score);
+							Log.w("Word", Game.this.currentWord);
+
 							Game.this.ctx.onGameFinished();
 						}
 					});
@@ -295,7 +302,7 @@ public abstract class Game {
 
 					@Override
 					public void run() {
-//						Game.this.ShowSpinner();
+						//						Game.this.ShowSpinner();
 
 						if(Game.this.gamestate == GameState.NOT_STARTED) return; // game ended already, do nothing
 
@@ -309,7 +316,7 @@ public abstract class Game {
 							}
 						}
 
-//						Game.this.HideSpinner();
+						//						Game.this.HideSpinner();
 					}
 				};
 				executor.execute(runnable);
@@ -317,33 +324,33 @@ public abstract class Game {
 		}
 	}
 
-//	/**
-//	 * Shows the spinner (ProgressBar)
-//	 */
-//	private void ShowSpinner() {
-//		Game.this.ctx.runOnUiThread(new Runnable() {
-//
-//			@Override
-//			public void run() {
-//				View spinner = Game.this.ctx.findViewById(R.id.guessSpinner);
-//				spinner.setVisibility(View.VISIBLE);				
-//			}
-//		});
-//	}
-//
-//	/**
-//	 * Hides the spinner (ProgressBar)
-//	 */
-//	private void HideSpinner() {
-//		Game.this.ctx.runOnUiThread(new Runnable() {
-//
-//			@Override
-//			public void run() {
-//				View spinner = Game.this.ctx.findViewById(R.id.guessSpinner);
-//				spinner.setVisibility(View.INVISIBLE);				
-//			}
-//		});
-//	}
+	//	/**
+	//	 * Shows the spinner (ProgressBar)
+	//	 */
+	//	private void ShowSpinner() {
+	//		Game.this.ctx.runOnUiThread(new Runnable() {
+	//
+	//			@Override
+	//			public void run() {
+	//				View spinner = Game.this.ctx.findViewById(R.id.guessSpinner);
+	//				spinner.setVisibility(View.VISIBLE);				
+	//			}
+	//		});
+	//	}
+	//
+	//	/**
+	//	 * Hides the spinner (ProgressBar)
+	//	 */
+	//	private void HideSpinner() {
+	//		Game.this.ctx.runOnUiThread(new Runnable() {
+	//
+	//			@Override
+	//			public void run() {
+	//				View spinner = Game.this.ctx.findViewById(R.id.guessSpinner);
+	//				spinner.setVisibility(View.INVISIBLE);				
+	//			}
+	//		});
+	//	}
 
 	// getters setters
 

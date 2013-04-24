@@ -1,14 +1,16 @@
 package nl.mprog.evilhangman.controllers;
 
 import nl.mprog.evilhangman.R;
-import nl.mprog.evilhangman.helpers.HighscoresHelper;
 import nl.mprog.evilhangman.helpers.SettingsHelper;
 import nl.mprog.evilhangman.helpers.WordHelper;
+import nl.mprog.evilhangman.models.SettingsModel;
 import android.inputmethodservice.Keyboard;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.util.Log;
 import android.view.GestureDetector;
 import android.view.KeyEvent;
@@ -24,6 +26,7 @@ public class MainActivity extends Activity {
 	// The game this is currently playing
 	private Game mainGame;	
 	private GestureDetector gestureDetector;
+	private SharedPreferences prefs;
 
 	/**
 	 * onCreate is called when the activity launches.
@@ -42,6 +45,10 @@ public class MainActivity extends Activity {
 		keyboardView.setEnabled(true);
 		keyboardView.setPreviewEnabled(true);  
 
+
+
+
+
 		// initialize wordhelper
 		WordHelper.instance.initialize(this); 
 
@@ -49,7 +56,10 @@ public class MainActivity extends Activity {
 		SettingsHelper.instance.initialize(this);
 
 		// initialize HighscoreHelper
-//		HighscoresHelper.instance.initialize(this);
+		//		HighscoresHelper.instance.initialize(this);
+
+		// initialize preferenceManager
+		prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
 
 		// create the a game
 		onGameFinished();
@@ -65,13 +75,13 @@ public class MainActivity extends Activity {
 	 * Callback called by a game
 	 */
 	public void onGameFinished() {
-		if (SettingsHelper.instance.getSettings().getEvil()){
+		if (prefs.getBoolean("evil", false)){
 			Log.w("Game Mode", "Evil");
 			mainGame = new EvilGame(this);
 		} else {
 			Log.w("Game Mode", "Normal");
 			mainGame = new NormalGame(this);
-		}	
+		}
 	}
 
 	@Override
@@ -111,11 +121,18 @@ public class MainActivity extends Activity {
 		case R.id.action_settings:
 			showSettings();
 			return true;
+		case R.id.action_highscores:
+			showHighscores();
+			return true;
 		default:
 			return super.onOptionsItemSelected(item);
 		}
 	}
 
+	public void showHighscores(){
+		this.startActivity(new Intent(getBaseContext(), HighscoreActivity.class));
+	}
+	
 
 	/*
 	 * Shows the settings for the game
