@@ -57,7 +57,7 @@ public enum WordHelper {
 	public String getRandomWord() {
 		this.open();
 
-		String selectQuery = "SELECT max(rowid) From words"; 
+		/*String selectQuery = "SELECT max(rowid) From words"; 
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		cursor.moveToFirst();
 		int max_rows = cursor.getInt(0);
@@ -69,8 +69,17 @@ public enum WordHelper {
 		selectQuery = "SELECT * From words WHERE rowid = "+randomRow;
 		cursor = db.rawQuery(selectQuery, null);
 		cursor.moveToFirst();
+		String word = cursor.getString(0);*/
+		
+		
+		String selectQuery = (SettingsHelper.instance.getSettings().getWordCount() == null ? 
+				"SELECT name FROM words ORDER BY RANDOM() LIMIT 1" : 
+				"SELECT name FROM words WHERE len ==" + SettingsHelper.instance.getSettings().getWordCount() + " ORDER BY RANDOM() LIMIT 1");
+			
+		Cursor cursor = db.rawQuery(selectQuery, null);
+		cursor.moveToFirst();
 		String word = cursor.getString(0);
-
+		
 		
 		cursor.close();
 		this.close();
