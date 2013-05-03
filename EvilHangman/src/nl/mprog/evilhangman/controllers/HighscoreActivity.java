@@ -1,9 +1,7 @@
 package nl.mprog.evilhangman.controllers;
-
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import nl.mprog.evilhangman.R;
 import nl.mprog.evilhangman.models.Highscore;
 import android.os.Bundle;
@@ -18,13 +16,14 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 import nl.mprog.evilhangman.controllers.DatabaseHandler;
-
 public class HighscoreActivity extends Activity {
+
+	private List<Highscore> AllHighscores;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-//		setContentView(R.layout.activity_highscore);
+		//		setContentView(R.layout.activity_highscore);
 		// Show the Up button in the action bar.
 		setupActionBar();
 		showHighscores();
@@ -36,12 +35,9 @@ public class HighscoreActivity extends Activity {
 		LinearLayout ll = new LinearLayout(this);
 		ll.setOrientation(LinearLayout.VERTICAL);
 		sv.addView(ll);
-
 		Highscore highScore = new Highscore(this);
-		List<Highscore> AllHighscores = highScore.getHighscores();
-		
-		
-//		Log.w("highscores size", ""+AllHighscores.size());
+
+		AllHighscores = highScore.getHighscores();
 
 		if (AllHighscores.size() == 0){
 			TextView tv = new TextView(this);
@@ -50,37 +46,21 @@ public class HighscoreActivity extends Activity {
 			ll.addView(tv);
 		} else {
 			Collections.sort(AllHighscores, new Comparator<Highscore>(){
-
 				@Override
 				public int compare(Highscore lhs, Highscore rhs) {
-					// TODO Auto-generated method stub
-//					return lhs.getScore().compareTo(rhs.getScore());
 					return (rhs.getScore() < lhs.getScore() ) ? -1: (rhs.getScore() > lhs.getScore()) ? 1:0; 
 				}
 			});
-			
 			TextView highScoresView = null;        
-			
 			for(int i=0; i<AllHighscores.size(); i++){
-//				Log.w("HighscoreID", "i="+i+", "+AllHighscores.get(i));
-//				Log.w("HighscoreID", "i="+i+", "+AllHighscores.get(i).getWord());
-//				Log.w("HighscoreID", "i="+i+", "+AllHighscores.get(i).getScore());
 				highScoresView = new TextView(this);
 				highScoresView.setText("Name: "+ AllHighscores.get(i).getName()+", Score: "+AllHighscores.get(i).getScore()+", Word: "+AllHighscores.get(i).getWord());
-//				tv.setText("Name: "+ AllHighscores.get(i).getName()+", Score: "+AllHighscores.get(i).getScore()+", Word: "+AllHighscores.get(i).getWord());
 				highScoresView.setLayoutParams(new LayoutParams(LayoutParams.FILL_PARENT, LayoutParams.WRAP_CONTENT));
 				ll.addView(highScoresView);
 				highScoresView = null;
-				
 			}
 		}
-		
 		this.setContentView(sv);
-
-
-
-
-
 	}
 
 	/**
@@ -92,31 +72,4 @@ public class HighscoreActivity extends Activity {
 			getActionBar().setDisplayHomeAsUpEnabled(true);
 		}
 	}
-
-
-
-	//	@Override
-	//	public boolean onCreateOptionsMenu(Menu menu) {
-	//		// Inflate the menu; this adds items to the action bar if it is present.
-	//		getMenuInflater().inflate(R.menu.game_menu, menu);
-	//		return true;
-	//	}
-
-	//	@Override
-	//	public boolean onOptionsItemSelected(MenuItem item) {
-	//		switch (item.getItemId()) {
-	//		case android.R.id.home:
-	//			// This ID represents the Home or Up button. In the case of this
-	//			// activity, the Up button is shown. Use NavUtils to allow users
-	//			// to navigate up one level in the application structure. For
-	//			// more details, see the Navigation pattern on Android Design:
-	//			//
-	//			// http://developer.android.com/design/patterns/navigation.html#up-vs-back
-	//			//
-	////			NavUtils.navigateUpFromSameTask(this);
-	//			return true;
-	//		}
-	//		return super.onOptionsItemSelected(item);
-	//	}
-
 }

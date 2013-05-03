@@ -1,4 +1,8 @@
 package nl.mprog.evilhangman.models;
+/**
+ * @author tom
+ * Highscore is used for getting and saving higscores into the database
+ */
 
 public class SettingsModel {
 
@@ -6,12 +10,12 @@ public class SettingsModel {
 	private boolean evilSetting;
 	private int maxAttemptsSetting;
 	private int wordCountSetting;
-	
+
 	//Empty Constructor
 	public SettingsModel(){
-		
+
 	}
-	
+
 	// Constructor
 	public SettingsModel(boolean evil, int maxAttempts, int wordCount) {
 		super();
@@ -40,7 +44,6 @@ public class SettingsModel {
 	public int getWordCount() {
 		return wordCountSetting;
 	}
-
 	public void setWordCount(int wordCount) {
 		wordCountSetting = wordCount;
 	}

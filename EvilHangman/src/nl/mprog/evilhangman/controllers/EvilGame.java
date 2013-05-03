@@ -1,9 +1,6 @@
 package nl.mprog.evilhangman.controllers;
-
 import java.util.ArrayList;
-
 import nl.mprog.evilhangman.helpers.WordHelper;
-
 /**
  * EvilGame is a class that extends the abstract class Game. When this type of game is run
  * the program will try to fool an user in thinking they guessed the wrong answer as much as possible.
@@ -39,10 +36,8 @@ public class EvilGame extends Game {
 	@Override
 	public void onCorrectAnswer(char key_press) {  
 		String old_word = this.getCurrentWord();	
-
 		ArrayList<Character> tempList = this.getBadCharacters();
 		tempList.addAll(this.getGoodCharacters());
-
 		if(this.cannotBeEvilAnymore) {
 			super.onCorrectAnswer(key_press);
 		}
@@ -59,7 +54,6 @@ public class EvilGame extends Game {
 				else {  
 					super.onWrongAnswer(key_press);
 					this.getCtx().runOnUiThread(new Runnable() {
-
 						@Override
 						public void run() {
 							//Toast.makeText(EvilGame.this.getCtx(), "New word:" + EvilGame.this.getCurrentWord(), Toast.LENGTH_LONG).show();	

@@ -1,5 +1,4 @@
 package nl.mprog.evilhangman.controllers;
-
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +9,11 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
-
+import android.util.Log;
+/**
+ * @author tom
+ * DatabaseHandler is used for getting a database model that allowes writing and reading of settings and highscores,  and also reading a new word
+ */
 public class DatabaseHandler extends SQLiteOpenHelper {
 	// Database Name
 	@SuppressLint("SdCardPath")
@@ -20,27 +23,20 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	private final Context myContext;
 
 	public DatabaseHandler(Context context) {
-
 		super(context, DATABASE_NAME, null, 1);
 		this.myContext = context;
-		
 	}
 
-
 	public void createDataBase() throws IOException {
-
 		boolean dbExist = checkDataBase();
-
 		if (dbExist) {
 			// do nothing - database already exist
 		} else {
-
 			// By calling this method and empty database will be created into
 			// the default system path
 			// of your application so we are gonna be able to overwrite that
 			// database with our database.
 			this.getReadableDatabase();
-
 			try {
 				copyDataBase();
 			} catch (IOException e) {
@@ -50,29 +46,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	}
 
 	private boolean checkDataBase() {
-
 		SQLiteDatabase checkDB = null;
-
 		try {
 			String myPath = DATABASE_PATH + DATABASE_NAME;
 			checkDB = SQLiteDatabase.openDatabase(myPath, null,
 					SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-
 		} catch (SQLiteException e) {
 			// database does't exist yet.
 		}
-
 		if (checkDB != null) {
-
 			checkDB.close();
-
 		}
-
 		return checkDB != null ? true : false;
 	}
 
 	private void copyDataBase() throws IOException {
-
 		// Open your local db as the input stream
 		InputStream myInput = myContext.getAssets().open(DATABASE_NAME);
 
@@ -93,28 +81,21 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 		myOutput.flush();
 		myOutput.close();
 		myInput.close();
-
 	}
 
 	public void openDataBase() throws SQLException {
-
 		// Open the database
 		String myPath = DATABASE_PATH + DATABASE_NAME;
 		myDataBase = SQLiteDatabase.openDatabase(myPath, null,
 				SQLiteDatabase.OPEN_READONLY | SQLiteDatabase.NO_LOCALIZED_COLLATORS);
-
 	}
 
 	@Override
 	public synchronized void close() {
-
 		if (myDataBase != null)
 			myDataBase.close();
-
 		super.close();
-
 	}
-
 
 	//Do not create Tables
 	@Override
@@ -127,12 +108,4 @@ public class DatabaseHandler extends SQLiteOpenHelper {
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
 		//Null
 	}
-
-
-
-
-
-
-
-
 }

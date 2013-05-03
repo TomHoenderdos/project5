@@ -1,5 +1,4 @@
 package nl.mprog.evilhangman.controllers;
-
 import nl.mprog.evilhangman.R;
 import nl.mprog.evilhangman.helpers.SettingsHelper;
 import nl.mprog.evilhangman.helpers.WordHelper;
@@ -19,7 +18,6 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.MotionEvent;
 import android.view.Window;
-
 @SuppressLint("NewApi")
 public class MainActivity extends Activity {
 
@@ -34,7 +32,6 @@ public class MainActivity extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);      
-
 		this.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		this.setContentView(R.layout.activity_main);
 
@@ -45,18 +42,11 @@ public class MainActivity extends Activity {
 		keyboardView.setEnabled(true);
 		keyboardView.setPreviewEnabled(true);  
 
-
-
-
-
 		// initialize wordhelper
-		WordHelper.instance.initialize(this); 
+		WordHelper.instance.initialize(this);
 
 		// initialize SettingsHelper
 		SettingsHelper.instance.initialize(this);
-
-		// initialize HighscoreHelper
-		//		HighscoresHelper.instance.initialize(this);
 
 		// initialize preferenceManager
 		prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
@@ -95,7 +85,6 @@ public class MainActivity extends Activity {
 		return super.onTouchEvent(me);
 	}
 
-
 	/**
 	 * The context menu is created here.
 	 */
@@ -107,7 +96,6 @@ public class MainActivity extends Activity {
 		//    	getMenuInflater().inflate(R.menu.main, menu);
 		return true;
 	}
-
 
 	/**
 	 * Called when one of the buttons is pressed in the context menu.
@@ -132,7 +120,6 @@ public class MainActivity extends Activity {
 	public void showHighscores(){
 		this.startActivity(new Intent(getBaseContext(), HighscoreActivity.class));
 	}
-	
 
 	/*
 	 * Shows the settings for the game
@@ -141,15 +128,11 @@ public class MainActivity extends Activity {
 		this.startActivity(new Intent(getBaseContext(), Preferences.class));
 	}
 
-
 	// getters
-
 	public Game getMainGame() {
 		return mainGame;
 	}
-
 	public GestureDetector getGestureDetector() {
 		return gestureDetector;
 	}
-
 }

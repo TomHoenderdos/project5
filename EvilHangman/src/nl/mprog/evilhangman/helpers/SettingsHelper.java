@@ -1,23 +1,21 @@
 package nl.mprog.evilhangman.helpers;
-
 import java.io.IOException;
-
 import nl.mprog.evilhangman.controllers.DatabaseHandler;
 import nl.mprog.evilhangman.models.SettingsModel;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.util.Log;
-
 public enum SettingsHelper {
 	instance;
 
+	//	Private vars
+	// Database	
 	private DatabaseHandler dbhandler = null;
 	private SQLiteDatabase db = null;
 
-	//Settings table name
+	// Settings table name
 	private static final String TABLE_SETTINGS = "settings";
 
 	// Settings Columns names
@@ -25,8 +23,8 @@ public enum SettingsHelper {
 	private static final String KEY_MAX_AT = "maxattempts";
 	private static final String KEY_WC = "wordcount";
 
+	// instance constructor	
 	public void initialize(Context ctx) {
-
 		dbhandler = new DatabaseHandler(ctx.getApplicationContext());
 		try {
 			dbhandler.createDataBase();
@@ -36,23 +34,21 @@ public enum SettingsHelper {
 		}
 	}
 
-	private void open(){
+	private void openDatabase(){
 		dbhandler.openDataBase();
 		db = dbhandler.getReadableDatabase();
 	}
 
-	private void close() {
+	private void closeDatabase() {
 		dbhandler.close();
-		db = null;
 	}
 
 	// Get settings
 	public SettingsModel getSettings(){
-		this.open();
+		this.openDatabase();
 
 		// Select all from table settings
 		String selectQuery = "SELECT * FROM " + TABLE_SETTINGS;
-
 		Cursor cursor = db.rawQuery(selectQuery, null);
 		SettingsModel setting = new SettingsModel();
 
@@ -67,9 +63,8 @@ public enum SettingsHelper {
 
 		// return list of settings
 		cursor.close();
-		this.close();
+		this.closeDatabase();
 		return setting;
-
 	}
 
 	// Save settings
@@ -79,15 +74,9 @@ public enum SettingsHelper {
 		values.put(KEY_MAX_AT, settingsModel.getMaxAttempts());
 		values.put(KEY_WC, settingsModel.getWordCount());
 
-		if (Boolean.toString(this.getSettings().getEvil()) == null){
-			this.open();
-			db.insert(TABLE_SETTINGS, null, values);
-			this.close();
-		} else {
-			this.open();
-			db.update(TABLE_SETTINGS, values, null, null);
-			this.close();
-		}
-		// Inserting Row
+
+		this.openDatabase();
+		db.update(TABLE_SETTINGS, values, null, null);
+		this.closeDatabase();
 	}
 }
