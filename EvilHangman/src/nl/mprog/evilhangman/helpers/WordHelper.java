@@ -1,6 +1,7 @@
 package nl.mprog.evilhangman.helpers;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.Random;
 import nl.mprog.evilhangman.controllers.DatabaseHandler;
@@ -72,7 +73,7 @@ public enum WordHelper {
 	 * @param pressedKey the character that was just pressed
 	 * @return
 	 */
-	public String getEvilWord(String currentWord, String matchPattern, ArrayList<Character> usedCharacters, char pressedKey){
+	public String getEvilWord(String currentWord, String matchPattern, List<Character> usedCharacters, char pressedKey){
 
 		//		long m1 = System.currentTimeMillis();
 

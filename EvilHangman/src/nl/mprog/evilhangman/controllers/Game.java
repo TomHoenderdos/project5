@@ -1,5 +1,6 @@
 package nl.mprog.evilhangman.controllers;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -26,8 +27,8 @@ import android.widget.TextView;
 public abstract class Game {
 	private String currentWord = new String();
 	private String wordPattern = new String();
-	private ArrayList<Character> badCharacters = new ArrayList<Character>();
-	private ArrayList<Character> goodCharacters = new ArrayList<Character>();    
+	private List<Character> badCharacters = new ArrayList<Character>();
+	private List<Character> goodCharacters = new ArrayList<Character>();    
 	// for processing guesses in correct order
 	private final ExecutorService executor = Executors.newSingleThreadExecutor();
 	private int currentAttempts;
@@ -51,7 +52,7 @@ public abstract class Game {
 	/**
 	 * Starts a new game. If a game is already running the user will be asked to confirm.
 	 */
-	public void newGame() {
+	protected void newGame() {
 		//Get settings and save them in SQLite DB
 		SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(ctx.getBaseContext());
 		SettingsModel settingsModel = SettingsHelper.instance.getSettings();
@@ -94,7 +95,7 @@ public abstract class Game {
 	/**
 	 * Selects a completely random word
 	 */
-	public void newWord() {
+	protected void newWord() {
 		this.currentWord = WordHelper.instance.getRandomWord().toLowerCase(Locale.getDefault());
 	}
 	/**
@@ -102,28 +103,28 @@ public abstract class Game {
 	 * new word is selected. It will also take care of losing and winning a game.
 	 * @param key_press The key that was pressed.
 	 */
-	public void onCorrectAnswer(final char key_press) {    
-		Game.this.goodCharacters.add(key_press);	
+	protected void onCorrectAnswer(final char key_press) {    
+		this.goodCharacters.add(key_press);	
 		((GameKeyboardView)this.ctx.findViewById(R.id.keyboardView)).setKeyboardKeyLabel(key_press, Game.this.ctx.getString(R.string.keyboard_button_correct));	
-		Game.this.updateWordPattern(); 
-		if(!Game.this.wordPattern.contains("_")) {
-			Game.this.onWinGame();
+		this.updateWordPattern(); 
+		if(!this.wordPattern.contains("_")) {
+			this.onWinGame();
 		}
 	}
 	/**
 	 * This method is called whenever a user guessed a character that is not in the current word. 
 	 * It updates the attempts accordingly.
 	 */
-	public void onWrongAnswer(final char key_press) {   
-		Game.this.badCharacters.add(key_press);	
+	protected void onWrongAnswer(final char key_press) {   
+		this.badCharacters.add(key_press);	
 		((GameKeyboardView)this.ctx.findViewById(R.id.keyboardView)).setKeyboardKeyLabel(key_press, Game.this.ctx.getString(R.string.keyboard_button_incorrect));	
-		Game.this.currentAttempts++;
-		Game.this.updateAttempts();
+		this.currentAttempts++;
+		this.updateAttempts();
 	}
 	/**
 	 * This is called when a user has won a game. 
 	 */
-	public void onWinGame() {
+	protected void onWinGame() {
 		//Toast.makeText(this, "You won the game!", Toast.LENGTH_LONG).show();
 		this.gamestate = GameState.NOT_STARTED;
 		this.endGamePopup(this.ctx.getString(R.string.win_game_message), true);
@@ -131,7 +132,7 @@ public abstract class Game {
 	/**
 	 * This is called when a user has lost a game. 
 	 */
-	public void onLoseGame() {
+	protected void onLoseGame() {
 		//Toast.makeText(this, "You lost the game!", Toast.LENGTH_LONG).show();
 		this.gamestate = GameState.NOT_STARTED;
 		this.endGamePopup(this.ctx.getString(R.string.lose_game_message), false);
@@ -141,7 +142,7 @@ public abstract class Game {
 	 * Updates the word pattern that is shown on screen. The pattern is derived from
 	 * the current word in conjunction with all used characters.
 	 */
-	public void updateWordPattern() {
+	protected void updateWordPattern() {
 		this.wordPattern = "";
 		final TextView word_view = (TextView) this.ctx.findViewById(R.id.word_view);
 		StringBuilder placeholder = new StringBuilder(" ");
@@ -166,7 +167,7 @@ public abstract class Game {
 	/**
 	 * Updates the attempts that is shown on screen.
 	 */
-	public void updateAttempts() {
+	protected void updateAttempts() {
 		this.ctx.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -183,7 +184,7 @@ public abstract class Game {
 	 * @param title title for alert
 	 * @param show_highscore show highscore or not?
 	 */
-	public void endGamePopup(final String title, final boolean show_highscore) {
+	protected void endGamePopup(final String title, final boolean show_highscore) {
 		this.ctx.runOnUiThread(new Runnable() {
 			@Override
 			public void run() {
@@ -230,7 +231,7 @@ public abstract class Game {
 	 * @param keyCode
 	 */
 	public void processKey(int keyCode) { 
-		if(Game.this.currentAttempts < Game.this.maxAttempts) {
+		if(this.currentAttempts < this.maxAttempts) {
 			int begin = 'a';
 			int min_value = KeyEvent.KEYCODE_A;
 			final char key_press = (char)(begin + (keyCode-min_value));
@@ -256,43 +257,43 @@ public abstract class Game {
 		}
 	}
 	// getters setters
-	public String getCurrentWord() {
+	protected String getCurrentWord() {
 		return currentWord;
 	}
-	public void setCurrentWord(String currentWord) {
+	protected void setCurrentWord(String currentWord) {
 		this.currentWord = currentWord;
 	}
-	public ArrayList<Character> getBadCharacters() {
+	protected List<Character> getBadCharacters() {
 		return badCharacters;
 	}
-	public void setBadCharacters(ArrayList<Character> badCharacters) {
+	protected void setBadCharacters(List<Character> badCharacters) {
 		this.badCharacters = badCharacters;
 	}	
-	public ArrayList<Character> getGoodCharacters() {
+	protected List<Character> getGoodCharacters() {
 		return goodCharacters;
 	}
-	public void setGoodCharacters(ArrayList<Character> goodCharacters) {
+	protected void setGoodCharacters(List<Character> goodCharacters) {
 		this.goodCharacters = goodCharacters;
 	}
-	public String getWordPattern() {
+	protected String getWordPattern() {
 		return wordPattern;
 	}
-	public void setWordPattern(String wordPattern) {
+	protected void setWordPattern(String wordPattern) {
 		this.wordPattern = wordPattern;
 	}
-	public int getCurrentAttempts() {
+	protected int getCurrentAttempts() {
 		return currentAttempts;
 	}
-	public void setCurrentAttempts(int currentAttempts) {
-		Game.this.currentAttempts = currentAttempts;
+	protected void setCurrentAttempts(int currentAttempts) {
+		this.currentAttempts = currentAttempts;
 	}
-	public GameState getGamestate() {
+	protected GameState getGamestate() {
 		return gamestate;
 	}
-	public void setGamestate(GameState gamestate) {
+	protected void setGamestate(GameState gamestate) {
 		this.gamestate = gamestate;
 	}
-	public MainActivity getCtx() {
+	protected MainActivity getCtx() {
 		return ctx;
 	}  
 }
